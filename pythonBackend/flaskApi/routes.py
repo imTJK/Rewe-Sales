@@ -8,7 +8,7 @@ from flaskApi.models import User, Zipcode, Rewe, Product, Discount
 from flask import Flask, request, jsonify
 import sqlite3
 
-### local functions
+### local functions ###
 
 ## SQL ##
 
@@ -19,7 +19,7 @@ import sqlite3
 
 
 
-### routing
+### routing ###
 @app.route('/', methods=['GET'])
 def index():
     if 'id' in request.args:
