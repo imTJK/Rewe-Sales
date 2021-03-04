@@ -113,3 +113,19 @@ class ReweSales extends StatelessWidget {
 
 
   }
+
+
+  class SalesNearby extends StatelessWidget {
+  final Future<Product> product = fetchPost();
+  @override
+    Widget build(BuildContext context) {
+    return Scaffold(
+     body: Center(
+       child: Container(decoration: BoxDecoration(
+
+       )
+       )
+     )
+   );
+  }
+  }
