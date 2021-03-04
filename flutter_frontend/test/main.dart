@@ -16,11 +16,26 @@ class ReweSales extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children:
               <Widget>[
-                Container(child: Center(child: TextField(decoration: InputDecoration(hintText: "Name", border: new OutlineInputBorder( borderSide: new BorderSide(color: Colors.transparent,))))), width: 300, height: 55, color: Colors.white70),
-                Container(child: Center(child: TextField(decoration: InputDecoration(hintText: "E-Mail", border: new OutlineInputBorder( borderSide: new BorderSide(color: Colors.transparent,))))), width: 300, height: 55, color: Colors.white70),
-                Container(child: Center(child: TextField(decoration: InputDecoration(hintText: "Passwort", border: new OutlineInputBorder( borderSide: new BorderSide(color: Colors.transparent,))))), width: 300, height: 55, color: Colors.white70),
+                Container(child: Center
+                  (child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Name",
+                          ))),
+                    width: 300, height: 50, color: Colors.white70),
+                Container(child: Center(
+                    child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "E-Mail",
+                        ))),
+                    width: 300, height: 50, color: Colors.white70),
+                Container(child: Center(
+                    child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Passwort",
+                        ))), width: 300, height: 50, color: Colors.white70),
               ]
           ))
+
     );
   }
 }
