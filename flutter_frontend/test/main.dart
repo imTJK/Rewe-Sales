@@ -21,18 +21,18 @@ class ReweSales extends StatelessWidget {
                     decoration: InputDecoration(
                         hintText: "Name",
                           ))),
-                    width: 300, height: 50, color: Colors.white70),
+                    width: 300, height: 45, color: Colors.white70),
                 Container(child: Center(
                     child: TextField(
                         decoration: InputDecoration(
                             hintText: "E-Mail",
                         ))),
-                    width: 300, height: 50, color: Colors.white70),
+                    width: 300, height: 45, color: Colors.white70),
                 Container(child: Center(
                     child: TextField(
                         decoration: InputDecoration(
                             hintText: "Passwort",
-                        ))), width: 300, height: 50, color: Colors.white70),
+                        ))), width: 300, height: 45, color: Colors.white70),
               ]
           ))
 
