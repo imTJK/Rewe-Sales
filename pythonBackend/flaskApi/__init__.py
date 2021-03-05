@@ -14,4 +14,3 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from flaskApi import routes, models
-

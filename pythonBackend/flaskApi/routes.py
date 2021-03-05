@@ -28,27 +28,29 @@ def index():
     else:
         return 'Thats some whack stuff'
 
-@app.route('/products', methods=['GET', "POST"])
-def products_json():
-    products_dict = []
+@app.route('/products/<int:page>/<int:amount>', methods=['GET', "POST"])
+def products_json(page, amount):
+    products_dict = {
+        "products" : []
+    }
     if 'category' in request.args:
         products = Product.query.filter_by(category=request.args['category']).all()
     else:
         products = Product.query.all()
 
-    for product in products:
-        products_dict.append(
-            {
-                'id' : product.id,
-                'name' : product.name,
-                'price' : product.price,
-                'img_src' : product.img_src,
-                'category' : product.category,
-                'on_sale' : product.on_sale
+    for i in range(page*amount, (page+1)*amount):
+        products_dict["products"].append(
+            {   
+                'id' : products[i].id,
+                'name' : products[i].name,
+                'price' : products[i].price,
+                'img_src' : products[i].img_src,
+                'category' : products[i].category,
+                'on_sale' : products[i].on_sale
             }
         )
 
-    return jsonify(products_dict)
+    return json.dumps(products_dict)
            
     
 
