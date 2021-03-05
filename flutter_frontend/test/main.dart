@@ -129,7 +129,7 @@ class ReweSales extends StatelessWidget {
           backgroundColor: Color.fromRGBO(201, 30, 30,100),
           actions: <Widget>[
             IconButton(icon: Icon(Icons.search), onPressed: () {
-              showSearch(context: null, delegate: DataSearch());
+              showSearch(context: context, delegate: DataSearch());
             })
           ],
         ),
@@ -154,6 +154,8 @@ class ReweSales extends StatelessWidget {
 
   }
   class DataSearch extends SearchDelegate<String>{
+  var listExample;
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
@@ -183,10 +185,35 @@ String selectedResult;
       ),
     );
   }
-
+  final List<String> list = List.generate(10, (index) => "Text $index");
+  List<String> recentList = ["deine", "muddi"];
   @override
   Widget buildSuggestions(BuildContext context) {
-throw UnimplementedError();
+    List<String> suggestionList = [];
+    query.isEmpty
+      ? suggestionList = recentList
+      : suggestionList.addAll(listExample.where(
+        (element) => element.contains(query),
+    ));
+    return Container(
+      color : Color.fromRGBO(240, 30, 30,10),
+       child:  ListView.builder(
+
+      itemCount: suggestionList.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(
+            suggestionList[index],
+          ),
+
+          onTap: (){
+            selectedResult = suggestionList[index];
+            showResults(context);
+          }
+        );
+      },
+    ),
+    );
   }
   
   }
