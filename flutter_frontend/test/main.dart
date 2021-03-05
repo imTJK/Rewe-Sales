@@ -8,16 +8,15 @@ import 'dart:convert';
 
 void main() => runApp(MaterialApp(home: ReweSales()));
 
-Future<Product> fetchProduct (int id) async {
+Future<List<Product>> fetchProduct() async {
   final response = await http.get("http://imtjk.pythonanywhere.com/products/0/100");
   var products = [];
   if (response.statusCode == 200) {
     var parsed_json = jsonDecode(response.body)['products'];
     for(int i = 0; i < parsed_json.length; i++){
-      if(parsed_json[i]['id'] == id){
-        return Product.fromJson(parsed_json[i]);
-      }
+      products.add(Product.fromJson(parsed_json[i]));
     }
+    return products;
   }
   else {
     throw Exception("Failed to load");
@@ -97,7 +96,7 @@ class ReweSales extends StatelessWidget {
 
 
   class Products extends StatelessWidget {
-    final Future<Product> product = fetchProduct(100);
+    final Future<List<Product>> product = fetchProduct();
     @override
     Widget build(BuildContext context) {
       return Scaffold(
