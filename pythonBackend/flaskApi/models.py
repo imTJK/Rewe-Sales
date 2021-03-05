@@ -25,9 +25,10 @@ class Rewe(db.Model):
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), index=True, unique=True)
-    producer = db.Column(db.String(30), index=True)
+    name = db.Column(db.String(100), index=True)
     price = db.Column(db.Float(precision=2), index=True)
+    img_src = db.Column(db.String(120))
+    category = db.Column(db.String(30), index=True)
     on_sale = db.Column(db.Boolean, default=False)
 
 class Discount(db.Model):

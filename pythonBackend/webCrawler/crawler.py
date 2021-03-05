@@ -3,17 +3,31 @@ import cloudscraper
 
 from bs4 import BeautifulSoup
 
-scraper = cloudscraper.Session()
-
-
 class ReweCrawler(object):
     def __init__(self, url):
         super().__init__()
         self.start_url = url
+        self.products = {}
+        self.scraper = cloudscraper.create_scraper()
+        self.scraper.cookies.set('marketsCookie', '%7B%22online%22%3A%7B%22wwIdent%22%3A%22540902%22%2C%22marketZipCode%22%3A%2228329%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228213%22%7D%2C%22stationary%22%3A%7B%7D%7D')
     
+    
+    def start_crawl(self):
+        for category in self.get_category_links():
+            product = self.get_products(self.start_url + category)
+            self.products.update({
+                str(category.replace('c','').replace('/','')) : product
+            })
+
+
+    
+
+
+
+
     ### scrapes the Site for links to each category of Product ###
     def get_category_links(self):
-        content = scraper.get(self.start_url).text
+        content = self.scraper.get(self.start_url).text
         page_soup = BeautifulSoup(content, "html.parser")
         categories = []
 
@@ -27,7 +41,7 @@ class ReweCrawler(object):
         products = []
 
         while url:          
-            page_soup = BeautifulSoup(scraper.get(url).text, "html.parser")
+            page_soup = BeautifulSoup(self.scraper.get(url).text, "html.parser")
             if len(page_soup.find_all("div", {"class" : "search-service-productDetailsWrapper"})) == 0:
                 break
 
@@ -35,6 +49,10 @@ class ReweCrawler(object):
                 divs = product.findChildren('div')
 
                 for div in divs:
+                    if div.attrs and div.attrs['class'] == ['search-service-productPicture']:
+                        img_url = div.contents[0].contents[0].contents[3].attrs['src'].split('?')[0]
+
+
                     if div.attrs and div.attrs['class'] == ['search-service-productDetails']:
                         amount = 'unknown'
                         if div.contents[4].next.attrs['class'] == ['search-service-productOffer']:
@@ -52,7 +70,7 @@ class ReweCrawler(object):
                             'price' : price,
                             'menge' : amount,
                             'on_sale' : on_sale,
-                            'img_url' : 
+                            'img_url' : img_url
                         })
 
             if len(url.split('?')) > 1:
@@ -61,23 +79,3 @@ class ReweCrawler(object):
                 url += '?page=2'
 
         return products[1:]
-
-
-if __name__ == "__main__":
-    url = "https://shop.rewe.de"
-    reweCrawler = ReweCrawler(url)
-
-    scraper = cloudscraper.create_scraper()
-    scraper.cookies.set('marketsCookie', '%7B%22online%22%3A%7B%22wwIdent%22%3A%22540902%22%2C%22marketZipCode%22%3A%2228329%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228213%22%7D%2C%22stationary%22%3A%7B%7D%7D')
-    
-    product_dict = {}
-
-
-    ### Get all Products from Categories ###
-    for category in reweCrawler.get_category_links():
-        product = reweCrawler.get_products(url + category)
-        product_dict.update({
-            str(category.replace('c','').replace('/','')) : product
-        })
-
-    yep
