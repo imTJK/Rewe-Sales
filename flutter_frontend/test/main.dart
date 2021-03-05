@@ -22,17 +22,19 @@ class Product {
    final int id;
    final String name;
    final double price;
-   final String producer;
+   final String category;
    final bool on_sale;
+   final String img_src;
 
-   Product({this.id, this.name, this.price, this.producer, this.on_sale});
+   Product({this.id, this.name, this.price, this.category, this.on_sale, this.img_src});
    factory Product.fromJson(Map<String, dynamic> json) {
      return Product(
        id: json['id'],
        name: json['name'],
        price: json['price'],
-       producer: json['producer'],
-       on_sale: json['on_sale']
+       category: json['category'],
+       on_sale: json['on_sale'],
+       img_src: json['img_src']
      );
    }
 
@@ -42,10 +44,10 @@ class ReweSales extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromRGBO(35, 152, 185, 90),
+      backgroundColor: Color.fromRGBO(201, 30, 30, 90),
         appBar: AppBar(
         title: Center(child: Text('Anmelden')),
-        backgroundColor: Color.fromRGBO(35,152,185,100),
+        backgroundColor: Color.fromRGBO(201, 30, 30,100),
       ),
           body: Center(child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -93,7 +95,14 @@ class ReweSales extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    appBar: AppBar(title: Center(child: Text('Suchen'))),
+        backgroundColor: Color.fromRGBO(201, 30, 30, 90),
+    appBar: AppBar(
+        title: Center(child: Text('Produkte')),
+        backgroundColor: Color.fromRGBO(201, 30, 30,100),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.search), onPressed: () {})
+        ],
+    ),
       body: Center(
         child: FutureBuilder<Product>(
           future: product,
@@ -112,4 +121,37 @@ class ReweSales extends StatelessWidget {
   }
 
 
+  }
+  class DataSearch extends SearchDelegate<String>{
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(icon: Icon(Icons.clear), onPressed: () {})
+    ];
+
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+        icon: AnimatedIcon(
+          icon: AnimatedIcons.menu_arrow,
+          progress: transitionAnimation,
+        ),
+        onPressed: (){}
+    );
+
+
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+
+  }
+  
   }
