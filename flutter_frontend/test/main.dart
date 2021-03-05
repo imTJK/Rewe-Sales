@@ -9,7 +9,7 @@ import 'dart:convert';
 void main() => runApp(MaterialApp(home: ReweSales()));
 
 Future<Product> fetchProduct (int id) async {
-  final response = await http.get("http://10.0.2.2:5000/products/0/100");
+  final response = await http.get("http://imtjk.pythonanywhere.com/products/0/100");
   var products = [];
   if (response.statusCode == 200) {
     var parsed_json = jsonDecode(response.body)['products'];
