@@ -15,11 +15,11 @@ class User(db.Model):
 
 class Zipcode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    district = db.Column(db.String(50))
+    district = db.Column(db.String(50), primary_key=True)
 
 class Rewe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True, unique=True)
+    name = db.Column(db.String(64), index=True)
     adress = db.Column(db.String(100), index=True, unique=True)
     plz = db.Column(db.Integer, db.ForeignKey('zipcode.id'))
 
