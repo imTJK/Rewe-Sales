@@ -9,10 +9,10 @@ import 'dart:convert';
 void main() => runApp(MaterialApp(home: ReweSales()));
 
 Future<Product> fetchPost () async {
-  final response = await http.get("http://jsonplaceholder.typicode.com/posts/1");
+  final response = await http.get("http://192.168.0.5:5000/products");
 
   if (response.statusCode == 200) {
-    return Product.fromJson(json.decode(response.body));
+    return Product.fromJson(jsonDecode(response.body));
   } else {
     throw Exception("Failed to load");
   }

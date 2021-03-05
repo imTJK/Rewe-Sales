@@ -28,7 +28,7 @@ def index():
     else:
         return 'Thats some whack stuff'
 
-@app.route('/products', methods=['GET'])
+@app.route('/products', methods=['GET', "POST"])
 def products_json():
     products_dict = []
     if 'category' in request.args:
