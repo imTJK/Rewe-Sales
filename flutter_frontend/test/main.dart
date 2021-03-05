@@ -196,7 +196,7 @@ String selectedResult;
         (element) => element.contains(query),
     ));
     return Container(
-      color : Color.fromRGBO(240, 30, 30,10),
+      color : Color.fromRGBO(140, 10, 10, 10),
        child:  ListView.builder(
 
       itemCount: suggestionList.length,
