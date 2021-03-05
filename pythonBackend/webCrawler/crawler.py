@@ -2,6 +2,10 @@ import requests
 import cloudscraper
 
 from bs4 import BeautifulSoup
+from flaskApi import db
+from flaskApi.models import User, Zipcode, Rewe, Product, Discount
+import json
+import time
 
 class ReweCrawler(object):
     def __init__(self, url):
@@ -12,7 +16,16 @@ class ReweCrawler(object):
         self.scraper.cookies.set('marketsCookie', '%7B%22online%22%3A%7B%22wwIdent%22%3A%22540902%22%2C%22marketZipCode%22%3A%2228329%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228213%22%7D%2C%22stationary%22%3A%7B%7D%7D')
     
     
-    def start_crawl(self):
+    def start_crawl(self, option : str):
+        options = {
+            'products' : self.crawl_products,
+            'rewes' : self.crawl_rewes
+        }
+
+        if option in options:
+            options[option]()
+
+    def crawl_products(self):
         for category in self.get_category_links():
             product = self.get_products(self.start_url + category)
             self.products.update({
@@ -20,11 +33,37 @@ class ReweCrawler(object):
             })
 
 
+
+    def crawl_rewes(self):
+        self.start_url = 'https://www.rewe.de/api/marketsearch?searchTerm='
+        
+        rewes = []
+        for zipcode in Zipcode.query.all():
+            time.sleep(1)
+            content = self.scraper.get(self.start_url + str(zipcode.id)).text
+            page_soup = BeautifulSoup(content, "html.parser")
+
+            if page_soup.contents[0] != '[]':
+                try:
+                    for rewe in json.loads(page_soup.contents[0]):
+                        if rewe not in rewes:
+                            rewes.append(rewe)
+                        else:
+                            print('duplicate')
+                except Exception as e:
+                    print(e)
+        
+
+        for rewe in rewes:
+            db_rewe = Rewe(
+                name = rewe['companyName'],
+                adress = rewe['contactStreet'] + ' ' + rewe['contactHouseNumber'],
+                plz = rewe['contactZipCode']
+            )
+            db.session.add(db_rewe)
+        db.session.commit()
+            
     
-
-
-
-
     ### scrapes the Site for links to each category of Product ###
     def get_category_links(self):
         content = self.scraper.get(self.start_url).text
