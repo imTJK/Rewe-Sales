@@ -8,3 +8,4 @@ class Config(object):
         self.SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(basedir, 'reweDB.db')
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
+        self.JSONIFY_PRETTYPRINT_REGULAR = True

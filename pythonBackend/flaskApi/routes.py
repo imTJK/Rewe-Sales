@@ -1,6 +1,7 @@
 import sys, os
 sys.path.append(os.path.dirname(__file__))
 
+import json
 
 from flaskApi import app, db
 from flaskApi.models import User, Zipcode, Rewe, Product, Discount
@@ -27,11 +28,29 @@ def index():
     else:
         return 'Thats some whack stuff'
 
+@app.route('/products', methods=['GET'])
+def products_json():
+    products_dict = []
+    if 'category' in request.args:
+        products = Product.query.filter_by(category=request.args['category']).all()
+    else:
+        products = Product.query.all()
 
-@app.route('/user-test', methods=['GET'])
-def test_user():
-    u = User(username='test', email='john@sda.com')
-    db.session.add(u)
-    db.session.commit()
+    for product in products:
+        products_dict.append(
+            {
+                'id' : product.id,
+                'name' : product.name,
+                'price' : product.price,
+                'img_src' : product.img_src,
+                'category' : product.category,
+                'on_sale' : product.on_sale
+            }
+        )
 
-    return str(u.username)
+    return jsonify(products_dict)
+           
+    
+
+
+
