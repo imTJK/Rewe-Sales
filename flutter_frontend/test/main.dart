@@ -10,7 +10,7 @@ void main() => runApp(MaterialApp(home: ReweSales()));
 
 Future<List<Product>> fetchProduct() async {
   final response = await http.get("http://imtjk.pythonanywhere.com/products/0/100");
-  var products = [];
+  List<Product> products = [];
   if (response.statusCode == 200) {
     var parsed_json = jsonDecode(response.body)['products'];
     for(int i = 0; i < parsed_json.length; i++){
@@ -96,7 +96,6 @@ class ReweSales extends StatelessWidget {
 
 
   class Products extends StatelessWidget {
-    final Future<List<Product>> product = fetchProduct();
     @override
     Widget build(BuildContext context) {
       return Scaffold(
@@ -109,12 +108,13 @@ class ReweSales extends StatelessWidget {
           ],
         ),
         body: Center(
-          child: FutureBuilder<Product>(
-            future: product,
+          child: FutureBuilder<List<Product>>(
+            future: fetchProduct(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Image.network(snapshot.data.img_src);
-              } else if (snapshot.hasError) {
+                return Image.network(snapshot.data[10].img_src);
+              }
+              else if (snapshot.hasError) {
                 return Text("${snapshot.error}");
               }
               return CircularProgressIndicator();
