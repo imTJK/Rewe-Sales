@@ -1,50 +1,43 @@
+
+# scraper-imports #
 import requests
 import cloudscraper
-
 from bs4 import BeautifulSoup
-from flaskApi import db
-from flaskApi.models import User, Zipcode, Rewe, Product, Discount
 import json
+
+# python standard imports #
 import time
+import csv
+import pandas as pd
+import sys
+
+
+# local imports # 
+sys.path.insert(1, r'D:\Programmieren\AndroidStudio\Projects\Rewe-Sales\pythonBackend')
+from flaskApi import app, db
+from flaskApi.models import User, Zipcode, Rewe, Product, Discount
+
 
 class ReweCrawler(object):
     def __init__(self):
         super().__init__()
-        self.config = json.load(open('options.json'))
+        self.options = json.load(open(r'pythonBackend\webCrawler\options.json'))
         self.products = {}
         self.parser = 'html.parser'
         self.scraper = cloudscraper.create_scraper()
     
 
-
-    def __get_option(self, option):
-         options = {
-            'products' : {
-                'function' : self.crawl_products,
-                'url' : 'https://www.rewe.de/api/marketsearch?searchTerm='
-            },
-            'sales' : {
-                'function' : self.crawl_sales,
-                'url' : 'https://shop.rewe.de/angebote'
-            },
-            'rewes' : {
-                'function' : self.crawl_rewes,
-                'url' : 'https://shop.rewe.de"'
-            }
-        }
-
     def __get_token_from_plz(self, plz):
-        
+        pass
 
     
     def start_crawl(self, option : str):
-       
-        
-        if option in options:
-            options[option]['function'](option['url'])
+        if option in self.options['functions']:
+            getattr(self, self.options['functions'][option]['function'])(self.options['functions'][option]['url'])
 
-    def crawl_sales(self, url, token):
-        self.scraper.cookies.set('marketsCookie', token)
+    def crawl_sales(self, url):
+        for plz, token in self.config['tokens']:
+            pass
         
 
     ### gets entirity of products excluding products from the on_sale category
@@ -70,7 +63,7 @@ class ReweCrawler(object):
         db.session.commit()
 
 
-    def crawl_rewes(self, url, token):  
+    def crawl_rewes(self, url):  
         rewes = []
         for zipcode in Zipcode.query.all():
             time.sleep(1)
@@ -93,7 +86,8 @@ class ReweCrawler(object):
                 adress = rewe['contactStreet'] + ' ' + rewe['contactHouseNumber'],
                 plz = rewe['contactZipCode']
             )
-            db.session.add(db_rewe)
+            if Rewe.query.filter_by(adress=str(db_rewe.adress).first() is None):
+                db.session.add(db_rewe)
         db.session.commit()
             
     def check_for_discount(self):
@@ -158,3 +152,11 @@ class ReweCrawler(object):
                 url += '?page=2'
 
         return products[1:]
+
+
+if __name__ == "__main__":
+    crawler = ReweCrawler()
+
+    #  crawler.start_crawl(option="rewes")
+    crawler.start_crawl(option="rewes")
+    pass

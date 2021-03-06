@@ -1,15 +1,15 @@
 {
     "functions" : {
         "products" : {
-            "function" : "self.crawl_products",
+            "function" : "crawl_products",
             "url" : "https://www.rewe.de/api/marketsearch?searchTerm="
         },
         "sales" : {
-            "function" : "self.crawl_sales",
+            "function" : "crawl_sales",
             "url" : "https://shop.rewe.de/angebote"
         },
         "rewes" : {
-            "function" : "self.crawl_rewes",
+            "function" : "crawl_rewes",
             "url" : "https://shop.rewe.de"
         }
     },

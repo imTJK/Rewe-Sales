@@ -20,10 +20,3 @@ def csv_to_db():
     db.session.commit()
 
 
-
-if __name__ == "__main__":
-    crawler = ReweCrawler()
-
-    #  crawler.start_crawl(option="rewes")
-    products = crawler.check_for_discount()
-    pass
