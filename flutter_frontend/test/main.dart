@@ -65,7 +65,6 @@ class Product {
 }
 
 class ReweSales extends StatelessWidget {
-  var _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,6 +122,46 @@ class ReweSales extends StatelessWidget {
                 child: Text('Anmelden'),
               ))
             ])));
+        title: Center(child: Text('Anmelden')),
+        backgroundColor: Color.fromRGBO(201, 30, 30,100),
+      ),
+          body: Center(child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children:
+              <Widget>[
+                Container(child: Center
+                  (child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Name",
+                          ))),
+                    width: 300, height: 45, color: Colors.white70),
+                Container(child: Center(
+                    child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "E-Mail",
+                        ))),
+                    width: 300, height: 45, color: Colors.white70),
+                Container(child: Center(
+                    child: TextField(
+                        decoration: InputDecoration(
+                            hintText: "Passwort",
+                        ))), width: 300, height: 45, color: Colors.white70),
+
+           BottomAppBar(child: TextButton(onPressed: () {
+             Navigator.of(context).push(
+               MaterialPageRoute(
+                 builder: (context) => Products()
+               )
+             );
+           },
+            child: Text('Anmelden'),
+            ))
+              ]
+          ))
+
+    );
+
   }
 }
 
@@ -140,6 +179,7 @@ class Products extends StatelessWidget {
                 onPressed: () {
                   showSearch(context: context, delegate: DataSearch());
                 })
+            IconButton(icon: Icon(Icons.search), onPressed: () {})
           ],
         ),
         body: Center(
@@ -168,6 +208,13 @@ class DataSearch extends SearchDelegate<String> {
           onPressed: () {
             query = "";
           })
+
+  }
+  class DataSearch extends SearchDelegate<String>{
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return [
+      IconButton(icon: Icon(Icons.clear), onPressed: () {})
     ];
   }
 
@@ -183,13 +230,19 @@ class DataSearch extends SearchDelegate<String> {
   }
 
   String selectedResult;
+        icon: AnimatedIcon(
+          icon: AnimatedIcons.menu_arrow,
+          progress: transitionAnimation,
+        ),
+        onPressed: (){}
+    );
+
+
+  }
+
   @override
   Widget buildResults(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text(selectedResult),
-      ),
-    );
+
   }
 
   final List<String> list = List.generate(10, (index) => "Text $index");
@@ -218,5 +271,8 @@ class DataSearch extends SearchDelegate<String> {
         },
       ),
     );
+  @override
+  Widget buildSuggestions(BuildContext context) {
+
   }
 }
