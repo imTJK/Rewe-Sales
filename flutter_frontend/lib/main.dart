@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 
 import 'dart:async';
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 void main() => runApp(MaterialApp(home: ReweSales()));
 
@@ -67,7 +68,12 @@ class ReweSales extends StatefulWidget {
 
 class _ReweSalesState extends State<ReweSales> {
 
+  TextEditingController _nameController = TextEditingController();
+  TextEditingController _emailController = TextEditingController();
   TextEditingController _passwortController = TextEditingController();
+
+  String _nameError;
+  String _emailError;
   String _passwordError;
   var _formKey = GlobalKey<FormState> ();
   var _formKey2 = GlobalKey<FormState> ();
@@ -88,20 +94,27 @@ class _ReweSalesState extends State<ReweSales> {
               <Widget>[
                 Container(child: Center(
                   child: Form(
+                    key: _formKey,
                     child: TextFormField(
+                      controller: _nameController,
                   textInputAction: TextInputAction.next,
                     keyboardType: TextInputType.name,
                     decoration: InputDecoration(
+                      errorText: _nameError,
                         hintText: "Name",
                           )))),
                     width: 300, height: 45, color: Colors.white70),
                 Container(child: Center(
+                  child: Form(
+                    key: _formKey2,
                     child: TextFormField(
+                      controller: _emailController,
                         textInputAction: TextInputAction.next,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
+                          errorText: _emailError,
                             hintText: "E-Mail",
-                        ))),
+                        )))),
                     width: 300, height: 45, color: Colors.white70),
                 Container(child: Center(
                   child: Form(
@@ -116,10 +129,16 @@ class _ReweSalesState extends State<ReweSales> {
                         )))), width: 300, height: 45, color: Colors.white70),
 
            BottomAppBar(child: TextButton(onPressed: () {
-             print("Passwort: " + _passwortController.text);
+             print("name: " + _nameController.text + "\nE-Mail: " + _emailController.text + "\nPasswort: ${sha256.convert(utf8.encode(_passwortController.text)).bytes}");
              setState(() {
+               if(_nameController.text.length < 1)
+                 _nameError = "Geben sie einen Namen ein";
+               else _nameError = null;
+               if(_emailController.text.contains("@") != true)
+                 _emailError = "Geben sie eine Email ein";
+               else _emailError = null;
                if(_passwortController.text.length < 8)
-                 _passwordError = "geben sie mindestens 8 Zeichen ein";
+                 _passwordError = "Geben sie mindestens 8 Zeichen ein";
                else{
                  _passwordError = null;
                  Navigator.of(context).push(
