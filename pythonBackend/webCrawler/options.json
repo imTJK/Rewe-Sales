@@ -1,14 +1,44 @@
 {
-    "products" : {
-        "function" : "self.crawl_products",
-        "url" : "https://www.rewe.de/api/marketsearch?searchTerm="
+    "functions" : {
+        "products" : {
+            "function" : "self.crawl_products",
+            "url" : "https://www.rewe.de/api/marketsearch?searchTerm="
+        },
+        "sales" : {
+            "function" : "self.crawl_sales",
+            "url" : "https://shop.rewe.de/angebote"
+        },
+        "rewes" : {
+            "function" : "self.crawl_rewes",
+            "url" : "https://shop.rewe.de"
+        }
     },
-    "sales" : {
-        "function" : "self.crawl_sales",
-        "url" : "https://shop.rewe.de/angebote"
-    },
-    "rewes" : {
-        "function" : "self.crawl_rewes",
-        "url" : "https://shop.rewe.de""
+    "cookies" : {
+        "28195" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22241101%22%2C%22marketZipCode%22%3A%2228199%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228195%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "28197" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22531054%22%2C%22marketZipCode%22%3A%2228259%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228197%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "28199" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22241101%22%2C%22marketZipCode%22%3A%2228199%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228199%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "28201" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22241101%22%2C%22marketZipCode%22%3A%2228199%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228201%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "28203" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22241101%22%2C%22marketZipCode%22%3A%2228199%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228203%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "28205" : "",
+        "28207" : "",
+        "28209" : "",
+        "28211" : "",
+        "28213" : "",
+        "28215" : "",
+        "28217" : "",
+        "28219" : "",
+        "28239" : "",
+        "28259" : "",
+        "28277" : "",
+        "28307" : "",
+        "28309" : "",
+        "28325" : "",
+        "28327" : "",
+        "28329" : "",
+        "28355" : "",
+        "28357" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540902%22%2C%22marketZipCode%22%3A%2228329%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228357%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "28359" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540902%22%2C%22marketZipCode%22%3A%2228329%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228359%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "28717" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540683%22%2C%22marketZipCode%22%3A%2227711%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228717%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "28757" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540683%22%2C%22marketZipCode%22%3A%2227711%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228757%22%7D%2C%22stationary%22%3A%7B%7D%7D"
     }
 }
