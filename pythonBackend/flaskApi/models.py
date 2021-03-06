@@ -16,6 +16,7 @@ class User(db.Model):
 class Zipcode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     district = db.Column(db.String(50), primary_key=True)
+    cookie = db.Column(db.String(255))
 
 class Rewe(db.Model):
     id = db.Column(db.Integer, primary_key=True)

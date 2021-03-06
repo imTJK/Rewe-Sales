@@ -8,40 +8,75 @@ import json
 import time
 
 class ReweCrawler(object):
-    def __init__(self, url):
+    def __init__(self):
         super().__init__()
-        self.start_url = url
         self.products = {}
+        self.parser = 'html.parser'
         self.scraper = cloudscraper.create_scraper()
-        self.scraper.cookies.set('marketsCookie', '%7B%22online%22%3A%7B%22wwIdent%22%3A%22540902%22%2C%22marketZipCode%22%3A%2228329%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228213%22%7D%2C%22stationary%22%3A%7B%7D%7D')
     
-    
-    def start_crawl(self, option : str):
-        options = {
-            'products' : self.crawl_products,
-            'rewes' : self.crawl_rewes
+
+
+    def __get_option(self, option):
+         options = {
+            'products' : {
+                'function' : self.crawl_products,
+                'url' : 'https://www.rewe.de/api/marketsearch?searchTerm='
+            },
+            'sales' : {
+                'function' : self.crawl_sales,
+                'url' : 'https://shop.rewe.de/angebote'
+            },
+            'rewes' : {
+                'function' : self.crawl_rewes,
+                'url' : 'https://shop.rewe.de"'
+            }
         }
 
-        if option in options:
-            options[option]()
+    def __get_token_from_plz(self, plz):
+        
 
-    def crawl_products(self):
-        for category in self.get_category_links():
-            product = self.get_products(self.start_url + category)
-            self.products.update({
+    
+    def start_crawl(self, option : str):
+       
+        
+        if option in options:
+            options[option]['function'](option['url'])
+
+    def crawl_sales(self, url, token):
+        self.scraper.cookies.set('marketsCookie', token)
+        
+
+
+
+    ### gets entirity of products excluding products from the on_sale category
+    def crawl_products(self, url, token):
+        self.scraper.cookies.set('marketsCookie', token)
+        products = {}
+        for category in self.get_category_links()[1:]:
+            product = self.get_products(url + category, get_sales=False)
+            products.update({
                 str(category.replace('c','').replace('/','')) : product
             })
 
+        for category, products in products.items():
+            for product in products:
+                p = Product(
+                    name = product['name'],
+                    price = product['price'],
+                    img_src = product['img_url'],
+                    on_sale = product['on_sale'],
+                    category = category
+                )
+                db.session.add(p)
+        db.session.commit()
 
 
-    def crawl_rewes(self):
-        self.start_url = 'https://www.rewe.de/api/marketsearch?searchTerm='
-        
+    def crawl_rewes(self, url, token):  
         rewes = []
         for zipcode in Zipcode.query.all():
             time.sleep(1)
-            content = self.scraper.get(self.start_url + str(zipcode.id)).text
-            page_soup = BeautifulSoup(content, "html.parser")
+            content = self.scraper.get(url + str(zipcode.id)).text
+            page_soup = BeautifulSoup(content, self.parser)
 
             if page_soup.contents[0] != '[]':
                 try:
@@ -53,7 +88,6 @@ class ReweCrawler(object):
                 except Exception as e:
                     print(e)
         
-
         for rewe in rewes:
             db_rewe = Rewe(
                 name = rewe['companyName'],
@@ -63,7 +97,13 @@ class ReweCrawler(object):
             db.session.add(db_rewe)
         db.session.commit()
             
-    
+    def check_for_discount(self):
+        products = Product.query.filter_by(on_sale='1').all()
+        return products
+
+
+
+
     ### scrapes the Site for links to each category of Product ###
     def get_category_links(self):
         content = self.scraper.get(self.start_url).text
@@ -76,11 +116,11 @@ class ReweCrawler(object):
         return categories
 
     ### scrapes site for products and their metadata 
-    def get_products(self, url):
+    def get_products(self, url, get_sales : bool):
         products = []
 
         while url:          
-            page_soup = BeautifulSoup(self.scraper.get(url).text, "html.parser")
+            page_soup = BeautifulSoup(self.scraper.get(url).text, self.parser)
             if len(page_soup.find_all("div", {"class" : "search-service-productDetailsWrapper"})) == 0:
                 break
 
@@ -94,15 +134,16 @@ class ReweCrawler(object):
 
                     if div.attrs and div.attrs['class'] == ['search-service-productDetails']:
                         amount = 'unknown'
-                        if div.contents[4].next.attrs['class'] == ['search-service-productOffer']:
-                            price = float(div.contents[4].contents[0].contents[1].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
-                            on_sale = True
+                        if get_sales:
+                            if div.contents[4].next.attrs['class'] == ['search-service-productOffer']:
+                                price = float(div.contents[4].contents[0].contents[1].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
+                                on_sale = True       
+                            else: break                
                         else: 
+                            if div.contents[2].attrs['class'] == ['search-service-productGrammage']:
+                                amount = div.contents[2].contents[0].contents[0].split(' ')[0]
                             price = float(div.contents[4].contents[0].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
                             on_sale = False
-
-                        if div.contents[2].attrs['class'] == ['search-service-productGrammage']:
-                            amount = div.contents[2].contents[0].contents[0].split(' ')[0]
 
                         products.append({
                             'name' : div.contents[1].contents[0].contents[0].text,
