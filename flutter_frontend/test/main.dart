@@ -229,13 +229,15 @@ class DataSearch extends SearchDelegate<String> {
     );
   }
 
-  String selectedResult(){
-    icon: AnimatedIcon(
-      icon: AnimatedIcons.menu_arrow,
-      progress: transitionAnimation,
-      );
-      onPressed: {return "Hello"}
-    )
+  String selectedResult;
+        icon: AnimatedIcon(
+          icon: AnimatedIcons.menu_arrow,
+          progress: transitionAnimation,
+        ),
+        onPressed: (){}
+    );
+
+
   }
 
   @override
@@ -273,6 +275,4 @@ class DataSearch extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
 
   }
-}
-}
 }
