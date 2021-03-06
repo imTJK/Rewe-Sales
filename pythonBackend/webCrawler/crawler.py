@@ -10,6 +10,7 @@ import time
 class ReweCrawler(object):
     def __init__(self):
         super().__init__()
+        self.config = json.load(open('options.json'))
         self.products = {}
         self.parser = 'html.parser'
         self.scraper = cloudscraper.create_scraper()
