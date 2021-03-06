@@ -1,16 +1,12 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:async';
 import 'dart:convert';
 
-
 void main() => runApp(MaterialApp(home: ReweSales()));
-
-
 
 Future<List<Product>> fetchProduct() async {
   final response = await http.get("http://imtjk.pythonanywhere.com/products/0/100");
@@ -49,17 +45,7 @@ class Product {
 
 }
 
-class ReweSales extends StatefulWidget {
-
-  @override
-  _ReweSalesState createState() => _ReweSalesState();
-}
-
-class _ReweSalesState extends State<ReweSales> {
-  TextEditingController _passwortController = TextEditingController();
-  String _passwortError;
-  var _formKey = GlobalKey<FormState>();
-
+class ReweSales extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,50 +59,30 @@ class _ReweSalesState extends State<ReweSales> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children:
               <Widget>[
-                Container(child: Center(
-                    child: TextFormField(
-                        textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
-                          hintText: "Name",
+                Container(child: Center
+                  (child: TextField(
+                    decoration: InputDecoration(
+                        hintText: "Name",
                           ))),
                     width: 300, height: 45, color: Colors.white70),
                 Container(child: Center(
-                    child: TextFormField(
-                        textInputAction: TextInputAction.next,
-                        keyboardType: TextInputType.emailAddress,
+                    child: TextField(
                         decoration: InputDecoration(
-                          hintText: "E-Mail",
+                            hintText: "E-Mail",
                         ))),
                     width: 300, height: 45, color: Colors.white70),
                 Container(child: Center(
-                  child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      controller: _passwortController,
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
+                    child: TextField(
                         decoration: InputDecoration(
-                            errorText: _passwortError,
-                            hintText: "Passwort(min. 8 Zeichen)",
-                        )))), width: 300, height: 45, color: Colors.white70),
+                            hintText: "Passwort",
+                        ))), width: 300, height: 45, color: Colors.white70),
 
            BottomAppBar(child: TextButton(onPressed: () {
-             print(_passwortController);
-             setState(() {
-               if(_passwortController.text.length < 8)
-                 _passwortError = "Muss mindestens 8 Zeichen enthalten";
-               else{
-                 _passwortError = null;
-                 Navigator.of(context).push(
-                     MaterialPageRoute(
-                         builder: (context) => Products()
-                     )
-                 );}
-
-             });
-
-
+             Navigator.of(context).push(
+               MaterialPageRoute(
+                 builder: (context) => Products()
+               )
+             );
            },
             child: Text('Anmelden'),
             ))
@@ -146,7 +112,7 @@ class _ReweSalesState extends State<ReweSales> {
             future: fetchProduct(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                return Image.network(snapshot.data[4].img_src);
+                return Image.network(snapshot.data[10].img_src);
               }
               else if (snapshot.hasError) {
                 return Text("${snapshot.error}");

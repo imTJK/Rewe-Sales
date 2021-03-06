@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(__file__))
 import json
 
 from flaskApi import app, db
-from flaskApi.models import User, Zipcode, Rewe, Product, Discount
+from flaskApi.models import User, Rewe, Product, Discount
 
 from flask import Flask, request, jsonify
 import sqlite3
@@ -52,7 +52,27 @@ def products_json(page, amount):
 
     return json.dumps(products_dict)
            
-    
 
+@app.route('/products', methods=['GET'])
+def filter_products():
+    products_dict = {
+        "products" : []
+    }
 
+    if 'name' in request.args:
+        products = Product.query.filter(Product.name.contains(request.args['name'])).all()
+        for i in range(len(products)):
+            products_dict["products"].append(
+            {   
+                'id' : products[i].id,
+                'name' : products[i].name,
+                'price' : products[i].price,
+                'img_src' : products[i].img_src,
+                'category' : products[i].category,
+                'on_sale' : products[i].on_sale
+            }
+        )
+        return json.dumps(products_dict)
 
+    else:
+        return "invalid request"
