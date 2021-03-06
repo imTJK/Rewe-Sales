@@ -13,9 +13,9 @@ Future<List<Product>> searchProduct(String term) async {
       await http.get("http://imtjk.pythonanywhere.com/products?name=${term}");
   List<Product> products = [];
   if (response.statusCode == 200) {
-    var parsed_json = jsonDecode(response.body)['products'];
-    for (int i = 0; i < parsed_json.length; i++) {
-      products.add(Product.fromJson(parsed_json[i]));
+    var parsedJson = jsonDecode(response.body)['products'];
+    for (int i = 0; i < parsedJson.length; i++) {
+      products.add(Product.fromJson(parsedJson[i]));
     }
     return products;
   } else {
@@ -28,9 +28,9 @@ Future<List<Product>> fetchProduct() async {
       await http.get("http://imtjk.pythonanywhere.com/products/0/100");
   List<Product> products = [];
   if (response.statusCode == 200) {
-    var parsed_json = jsonDecode(response.body)['products'];
-    for (int i = 0; i < parsed_json.length; i++) {
-      products.add(Product.fromJson(parsed_json[i]));
+    var parsedJson = jsonDecode(response.body)['products'];
+    for (int i = 0; i < parsedJson.length; i++) {
+      products.add(Product.fromJson(parsedJson[i]));
     }
     return products;
   } else {
@@ -43,24 +43,24 @@ class Product {
   final String name;
   final double price;
   final String category;
-  final bool on_sale;
-  final String img_src;
+  final bool onSale;
+  final String imgSrc;
 
   Product(
       {this.id,
       this.name,
       this.price,
       this.category,
-      this.on_sale,
-      this.img_src});
+      this.onSale,
+      this.imgSrc});
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
         id: json['id'],
         name: json['name'],
         price: json['price'],
         category: json['category'],
-        on_sale: json['on_sale'],
-        img_src: json['img_src']);
+        onSale: json['on_sale'],
+        imgSrc: json['img_src']);
   }
 }
 
@@ -70,7 +70,11 @@ class ReweSales extends StatefulWidget {
 }
 
 class _ReweSalesState extends State<ReweSales> {
+  TextEditingController _passwortController = TextEditingController();
+  String _passwordError;
   var _formKey = GlobalKey<FormState>();
+  var _formKey2 = GlobalKey<FormState>();
+  var _formKey3 = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -87,12 +91,13 @@ class _ReweSalesState extends State<ReweSales> {
                 children: <Widget>[
               Container(
                   child: Center(
-                      child: TextFormField(
-                          textInputAction: TextInputAction.next,
-                          keyboardType: TextInputType.name,
-                          decoration: InputDecoration(
-                            hintText: "Name",
-                          ))),
+                      child: Form(
+                          child: TextFormField(
+                              textInputAction: TextInputAction.next,
+                              keyboardType: TextInputType.name,
+                              decoration: InputDecoration(
+                                hintText: "Name",
+                              )))),
                   width: 300,
                   height: 45,
                   color: Colors.white70),
@@ -110,11 +115,13 @@ class _ReweSalesState extends State<ReweSales> {
               Container(
                   child: Center(
                       child: Form(
-                          key: _formKey,
+                          key: _formKey3,
                           child: TextFormField(
+                              controller: _passwortController,
                               obscureText: true,
                               keyboardType: TextInputType.visiblePassword,
                               decoration: InputDecoration(
+                                errorText: _passwordError,
                                 hintText: "Passwort",
                               )))),
                   width: 300,
@@ -123,8 +130,16 @@ class _ReweSalesState extends State<ReweSales> {
               BottomAppBar(
                   child: TextButton(
                 onPressed: () {
-                  Navigator.of(context).push(
-                      MaterialPageRoute(builder: (context) => Products()));
+                  print("Passwort: " + _passwortController.text);
+                  setState(() {
+                    if (_passwortController.text.length < 8)
+                      _passwordError = "geben sie mindestens 8 Zeichen ein";
+                    else {
+                      _passwordError = null;
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (context) => Products()));
+                    }
+                  });
                 },
                 child: Text('Anmelden'),
               ))
@@ -153,7 +168,7 @@ class Products extends StatelessWidget {
           future: fetchProduct(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              return Image.network(snapshot.data[10].img_src);
+              return Image.network(snapshot.data[10].imgSrc);
             } else if (snapshot.hasError) {
               return Text("${snapshot.error}");
             }
@@ -164,7 +179,7 @@ class Products extends StatelessWidget {
 }
 
 class DataSearch extends SearchDelegate<String> {
-  var listExample = ['Hello'];
+  var listExample = ['SuckaDick'];
 
   @override
   List<Widget> buildActions(BuildContext context) {
