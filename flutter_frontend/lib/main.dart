@@ -1,117 +1,227 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-void main() {
-  runApp(MyApp());
-}
+import 'dart:async';
+import 'dart:convert';
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
-        // This makes the visual density adapt to the platform that you run
-        // the app on. For desktop platforms, the controls will be smaller and
-        // closer together (more dense) than on mobile platforms.
-        visualDensity: VisualDensity.adaptivePlatformDensity,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+void main() => runApp(MaterialApp(home: ReweSales()));
+
+Future<List<Product>> searchProduct(String term) async {
+  final response =
+      await http.get("http://imtjk.pythonanywhere.com/products?name=${term}");
+  List<Product> products = [];
+  if (response.statusCode == 200) {
+    var parsed_json = jsonDecode(response.body)['products'];
+    for (int i = 0; i < parsed_json.length; i++) {
+      products.add(Product.fromJson(parsed_json[i]));
+    }
+    return products;
+  } else {
+    throw Exception("Failed to load");
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
+Future<List<Product>> fetchProduct() async {
+  final response =
+      await http.get("http://imtjk.pythonanywhere.com/products/0/100");
+  List<Product> products = [];
+  if (response.statusCode == 200) {
+    var parsed_json = jsonDecode(response.body)['products'];
+    for (int i = 0; i < parsed_json.length; i++) {
+      products.add(Product.fromJson(parsed_json[i]));
+    }
+    return products;
+  } else {
+    throw Exception("Failed to load");
+  }
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+class Product {
+  final int id;
+  final String name;
+  final double price;
+  final String category;
+  final bool on_sale;
+  final String img_src;
 
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+  Product(
+      {this.id,
+      this.name,
+      this.price,
+      this.category,
+      this.on_sale,
+      this.img_src});
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+        id: json['id'],
+        name: json['name'],
+        price: json['price'],
+        category: json['category'],
+        on_sale: json['on_sale'],
+        img_src: json['img_src']);
   }
+}
+
+class ReweSales extends StatefulWidget {
+  @override
+  _ReweSalesState createState() => _ReweSalesState();
+}
+
+class _ReweSalesState extends State<ReweSales> {
+  var _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
+        backgroundColor: Color.fromRGBO(201, 30, 30, 90),
+        appBar: AppBar(
+          title: Center(child: Text('Anmelden')),
+          backgroundColor: Color.fromRGBO(201, 30, 30, 100),
+        ),
+        body: Center(
+            child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+              Container(
+                  child: Center(
+                      child: TextFormField(
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.name,
+                          decoration: InputDecoration(
+                            hintText: "Name",
+                          ))),
+                  width: 300,
+                  height: 45,
+                  color: Colors.white70),
+              Container(
+                  child: Center(
+                      child: TextFormField(
+                          textInputAction: TextInputAction.next,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: InputDecoration(
+                            hintText: "E-Mail",
+                          ))),
+                  width: 300,
+                  height: 45,
+                  color: Colors.white70),
+              Container(
+                  child: Center(
+                      child: Form(
+                          key: _formKey,
+                          child: TextFormField(
+                              obscureText: true,
+                              keyboardType: TextInputType.visiblePassword,
+                              decoration: InputDecoration(
+                                hintText: "Passwort",
+                              )))),
+                  width: 300,
+                  height: 45,
+                  color: Colors.white70),
+              BottomAppBar(
+                  child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => Products()));
+                },
+                child: Text('Anmelden'),
+              ))
+            ])));
+  }
+}
+
+class Products extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Color.fromRGBO(201, 30, 30, 90),
+        appBar: AppBar(
+          title: Center(child: Text('Produkte')),
+          backgroundColor: Color.fromRGBO(201, 30, 30, 100),
+          actions: <Widget>[
+            IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(context: context, delegate: DataSearch());
+                })
           ],
         ),
+        body: Center(
+            child: FutureBuilder<List<Product>>(
+          future: fetchProduct(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              return Image.network(snapshot.data[10].img_src);
+            } else if (snapshot.hasError) {
+              return Text("${snapshot.error}");
+            }
+            return CircularProgressIndicator();
+          },
+        )));
+  }
+}
+
+class DataSearch extends SearchDelegate<String> {
+  var listExample = ['Hello'];
+
+  @override
+  List<Widget> buildActions(BuildContext context) {
+    return <Widget>[
+      IconButton(
+          icon: Icon(Icons.clear),
+          onPressed: () {
+            query = "";
+          })
+    ];
+  }
+
+  @override
+  Widget buildLeading(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.arrow_back),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+  }
+
+  String selectedResult;
+  @override
+  Widget buildResults(BuildContext context) {
+    return Container(
+      child: Center(
+        child: Text(selectedResult),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  final List<String> list = List.generate(10, (index) => "Text $index");
+  List<String> recentList = ["deine", "muddi"];
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    List<String> suggestionList = [];
+    query.isEmpty
+        ? suggestionList = recentList
+        : suggestionList.addAll(listExample.where(
+            (element) => element.contains(query),
+          ));
+    return Container(
+      color: Color.fromRGBO(135, 20, 20, 10),
+      child: ListView.builder(
+        itemCount: suggestionList.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+              title: Text(
+                suggestionList[index],
+              ),
+              onTap: () {
+                selectedResult = suggestionList[index];
+                showResults(context);
+              });
+        },
+      ),
     );
   }
 }

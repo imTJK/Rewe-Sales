@@ -46,8 +46,6 @@ class ReweCrawler(object):
         self.scraper.cookies.set('marketsCookie', token)
         
 
-
-
     ### gets entirity of products excluding products from the on_sale category
     def crawl_products(self, url, token):
         self.scraper.cookies.set('marketsCookie', token)
