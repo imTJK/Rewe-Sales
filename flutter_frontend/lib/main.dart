@@ -251,30 +251,35 @@ class DataSearch extends SearchDelegate<String> {
   }
 
   final List<String> list = List.generate(10, (index) => "Text $index");
-  List<String> recentList = ["deine", "muddi"];
+  List recentList = [];
+  void getProducts()async{
+    this.recentList = await fetchProduct();
+  }
+
   @override
   Widget buildSuggestions(BuildContext context) {
-    List<String> suggestionList = [];
-    query.isEmpty
-        ? suggestionList = recentList
-        : suggestionList.addAll(listExample.where(
-            (element) => element.toLowerCase().contains(query.toLowerCase()),
-          ));
-    return Container(
-      color: Color.fromRGBO(135, 20, 20, 10),
-      child: ListView.builder(
-        itemCount: suggestionList.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-              title: Text(
-                suggestionList[index],
-              ),
-              onTap: () {
-                selectedResult = suggestionList[index];
-                showResults(context);
-              });
-        },
-      ),
-    );
+
+    return Scaffold(
+        body: FutureBuilder(
+          future: fetchProduct(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            } else {List itemList = snapshot.data.where(
+                    (Product) => Product.name.toLowerCase().contains(query.toLowerCase()));
+
+              return Container(
+                  child: ListView.builder(
+                      itemCount: itemList.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return new Card(
+                            child: ListTile(
+                              title: Text(itemList[index].name),
+                              leading: Image.network(itemList[index].img_src),
+                            ));
+                      }));
+            }
+          },
+        ));
   }
 }
