@@ -195,6 +195,7 @@ class Products extends StatelessWidget {
           future: fetchProduct(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
+              print(snapshot);
               return Center(child: CircularProgressIndicator());
             } else {
               return Container(

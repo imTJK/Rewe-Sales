@@ -76,3 +76,12 @@ def filter_products():
 
     else:
         return "invalid request"
+
+
+
+@app.route('/addUser', methods=['POST'])
+def add_user():
+    if request.is_json():
+        content = request.get_json()
+
+        return 'JSON posted: {}'.format(str(json.loads(content)))

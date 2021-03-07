@@ -15,7 +15,7 @@ import sys
 # local imports # 
 sys.path.insert(1, r'D:\Programmieren\AndroidStudio\Projects\Rewe-Sales\pythonBackend')
 from flaskApi import app, db
-from flaskApi.models import User, Zipcode, Rewe, Product, Discount
+from flaskApi.models import User, Zipcode, Rewe, Product, Discount, Prices
 
 
 class ReweCrawler(object):
@@ -26,13 +26,9 @@ class ReweCrawler(object):
         self.scraper = cloudscraper.create_scraper()
     
 
-    def __get_token_from_plz(self, plz):
-        pass
-
-    
     def start_crawl(self, option : str):
         if option in self.options['functions']:
-            getattr(self, self.options['functions'][option]['function'])(self.options['functions'][option]['url'])
+            getattr(self, self.options['functions'][option]['function'])(self.options['functions'][option]['url'], "")
 
     def crawl_sales(self, url):
         for plz, cookie in self.options['cookies'].items():
@@ -44,28 +40,65 @@ class ReweCrawler(object):
 
 
     ### gets entirity of products excluding products from the on_sale category
-    def crawl_products(self, url, token):
-        self.scraper.cookies.set('marketsCookie', token)
-        products = {}
-        for category in self.get_category_links()[1:]:
-            product = self.get_products(url + category, get_sales=False)
-            products.update({
-                str(category.replace('c','').replace('/','')) : product
-            })
+    def crawl_products(self, url, zipcode):
+        for category in self.get_category_links(url):
+            self.scraper.cookies.set('marketsCookie', self.options['cookies'][zipcode])
+            search_url = url + category
+            while search_url:          
+                page_soup = BeautifulSoup(self.scraper.get(search_url).text, self.parser)
+                if len(page_soup.find_all("div", {"class" : "search-service-productDetailsWrapper"})) == 0:
+                    break
 
-        for category, products in products.items():
-            for product in products:
-                p = Product(
-                    name = product['name'],
-                    price = product['price'],
-                    img_src = product['img_url'],
-                    on_sale = product['on_sale'],
-                    category = category
-                )
-                db.session.add(p)
-        db.session.commit()
+                for product in page_soup.find_all("div", {"class" : "search-service-productDetailsWrapper"}):
+                    found_other = False
+                    divs = product.findChildren('div')
+                    price, amount, on_sale_in  = "", "", "" 
+                    p = Product()
+
+                    for div in divs:
+                        if div.attrs and div.attrs['class'] == ['search-service-productPicture']:
+                            p.img_url = div.contents[0].contents[0].contents[3].attrs['src'].split('?')[0]
+
+                        if div.attrs and div.attrs['class'] == ['search-service-productDetails']:
+                            p.name =  div.contents[1].contents[0].contents[0].text
+                            if zipcode != "":
+                                prices = Prices(rewe_plz = zipcode)
+
+                                if div.contents[4].next.attrs['class'] == ['search-service-productOffer']:
+                                    other_products = Product.query.filter_by(name=p.name).all()
+                                    for other_product in other_products:
+                                        if other_product.name == p.name and other_product.category == p.category and p.on_sale_in != "":
+                                            other_product.on_sale_in += ", {}".format(p.on_sale_in)
+                                            prices.product_id = other_product.id
+                                            found_other=True
+
+                     
+                                    prices.on_sale = True
+                                 
+                                    prices.price = float(div.contents[4].contents[0].contents[1].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
+                                                 
+                                else: 
+                                    prices.price = float(div.contents[4].contents[0].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
+                                    
+                                if div.contents[2].attrs['class'] == ['search-service-productGrammage']:
+                                    p.amount = div.contents[2].contents[0].contents[0].split(' ')[0]                               
+                                
+                                prices.product_id = p.id
 
 
+                                db.session.add(prices)
+                            if not found_other:
+                                db.session.add(p)
+
+                if len(search_url.split('?')) > 1:
+                    search_url = search_url.replace(str(search_url.split('page=')[1]), str(int(search_url.split('page=')[1]) + 1))
+                else:
+                    search_url += '?page=2'
+                
+                
+    db.session.commit()
+
+    
     def crawl_rewes(self, url):  
         rewes = []
         for zipcode in Zipcode.query.all():
@@ -98,11 +131,9 @@ class ReweCrawler(object):
         return products
 
 
-
-
     ### scrapes the Site for links to each category of Product ###
-    def get_category_links(self):
-        content = self.scraper.get(self.start_url).text
+    def get_category_links(self, url):
+        content = self.scraper.get(url).text
         page_soup = BeautifulSoup(content, "html.parser")
         categories = []
 
@@ -112,57 +143,12 @@ class ReweCrawler(object):
         return categories
 
     ### scrapes site for products and their metadata 
-    def get_products(self, url, get_sales : bool):
-        products = []
-
-        while url:          
-            page_soup = BeautifulSoup(self.scraper.get(url).text, self.parser)
-            if len(page_soup.find_all("div", {"class" : "search-service-productDetailsWrapper"})) == 0:
-                break
-
-            for product in page_soup.find_all("div", {"class" : "search-service-productDetailsWrapper"}):
-                divs = product.findChildren('div')
-
-                for div in divs:
-                    if div.attrs and div.attrs['class'] == ['search-service-productPicture']:
-                        img_url = div.contents[0].contents[0].contents[3].attrs['src'].split('?')[0]
-
-
-                    if div.attrs and div.attrs['class'] == ['search-service-productDetails']:
-                        amount = 'unknown'
-                        if get_sales:
-                            if div.contents[4].next.attrs['class'] == ['search-service-productOffer']:
-                                price = float(div.contents[4].contents[0].contents[1].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
-                                on_sale = True       
-                            else: break                
-                        else: 
-                            
-                            price = float(div.contents[4].contents[0].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
-                            on_sale = False
-
-                        if div.contents[2].attrs['class'] == ['search-service-productGrammage']:
-                            amount = div.contents[2].contents[0].contents[0].split(' ')[0]
-
-
-                        products.append({
-                            'name' : div.contents[1].contents[0].contents[0].text,
-                            'price' : price,
-                            'menge' : amount,
-                            'on_sale' : on_sale,
-                            'img_url' : img_url
-                        })
-
-            if len(url.split('?')) > 1:
-                url = url.replace(str(url.split('page=')[1]), str(int(url.split('page=')[1]) + 1))
-            else:
-                url += '?page=2'
-
-        return products[1:]
 
 
 if __name__ == "__main__":
     crawler = ReweCrawler()
 
     #  crawler.start_crawl(option="rewes")
-    crawler.start_crawl(option="sales")
+    crawler.start_crawl(option="products")
+
     pass
