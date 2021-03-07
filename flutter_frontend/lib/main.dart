@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,7 +9,6 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:logging/logging.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 import 'sign_up.dart';
 
@@ -76,30 +76,28 @@ class ReweSales extends StatefulWidget {
   _ReweSalesState createState() => _ReweSalesState();
 }
 
-Future<SignUp> createUser(String name, String email, String passwort) async{
+Future<SignUp> createUser(String name, String email, String passwort) async {
   final String apiUrl = "http://imtjk.pythonanywhere.com/addUser";
 
   final response = await http.post(apiUrl,
       headers: <String, String>{
-    "Content-Type":"application/json; charset=UTF-8"
+        "Content-Type": "application/json; charset=UTF-8"
       },
       body: jsonEncode(<String, String>{
-    "name": name,
-    "email": email,
-    "passwort": sha256.convert(utf8.encode(passwort)).toString()}
-  ));
-print(response.statusCode);
-  if (response.statusCode == 200){
+        "name": name,
+        "email": email,
+        "passwort": sha256.convert(utf8.encode(passwort)).toString()
+      }));
+  print(response.statusCode);
+  if (response.statusCode == 200) {
     final String responseString = response.body;
     print(responseString);
-
-  }else{
+  } else {
     return null;
   }
 }
 
- class _ReweSalesState extends State<ReweSales> {
-
+class _ReweSalesState extends State<ReweSales> {
   SignUp _user;
 
   TextEditingController _nameController = TextEditingController();
@@ -173,18 +171,18 @@ print(response.statusCode);
                   color: Colors.white70),
               BottomAppBar(
                   child: TextButton(
-                  onPressed: () async{
-                    final String name = _nameController.text;
-                    final String email = _emailController.text;
-                    final String passwort = _passwortController.text;
+                onPressed: () async {
+                  final String name = _nameController.text;
+                  final String email = _emailController.text;
+                  final String passwort = _passwortController.text;
 
-                    final SignUp user = await createUser(name, email, passwort);
+                  final SignUp user = await createUser(name, email, passwort);
 
-                    setState(() {
-                      _user = user;
-                    });
+                  setState(() {
+                    _user = user;
+                  });
 
-                    print("name: " +
+                  print("name: " +
                       _nameController.text +
                       "\nE-Mail: " +
                       _emailController.text +
@@ -207,7 +205,7 @@ print(response.statusCode);
                     }
                   });
                 },
-                    child: Text('Anmelden'),
+                child: Text('Anmelden'),
               ))
             ])));
   }
@@ -244,8 +242,8 @@ class Products extends StatelessWidget {
                       itemBuilder: (BuildContext context, int index) {
                         return new Card(
                             child: ListTile(
-                              title: Text(snapshot.data[index].name),
-                              leading: Image.network(snapshot.data[index].img_src),
+                          title: Text(snapshot.data[index].name),
+                          leading: Image.network(snapshot.data[index].img_src),
                         ));
                       }));
             }
@@ -290,34 +288,37 @@ class DataSearch extends SearchDelegate<String> {
 
   final List<String> list = List.generate(10, (index) => "Text $index");
   List recentList = [];
-  void getProducts()async{
+  List itemList = [];
+  void getProducts() async {
     this.recentList = await fetchProduct();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-
     return Scaffold(
         body: FutureBuilder(
-          future: fetchProduct(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
-            } else {List itemList = snapshot.data.where(
-                    (Product) => Product.name.toLowerCase().contains(query.toLowerCase()));
-
-              return Container(
-                  child: ListView.builder(
-                      itemCount: itemList.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return new Card(
-                            child: ListTile(
-                              title: Text(itemList[index].name),
-                              leading: Image.network(itemList[index].img_src),
-                            ));
-                      }));
+      future: fetchProduct(),
+      builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          for (int i = 0; i < snapshot.data.length; i++) {
+            if (snapshot.data[i].name.contains(query.toLowerCase())) {
+              itemList.add(snapshot.data[i]);
             }
-          },
-        ));
+          }
+          return Container(
+              child: ListView.builder(
+                  itemCount: itemList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return new Card(
+                        child: ListTile(
+                      title: Text(itemList[index].name),
+                      leading: Image.network(itemList[index].img_src),
+                    ));
+                  }));
+        }
+      },
+    ));
   }
 }
