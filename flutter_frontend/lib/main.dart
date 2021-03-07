@@ -255,7 +255,7 @@ class DataSearch extends SearchDelegate<String> {
     query.isEmpty
         ? suggestionList = recentList
         : suggestionList.addAll(listExample.where(
-            (element) => element.contains(query),
+            (element) => element.toLowerCase().contains(query.toLowerCase()),
           ));
     return Container(
       color: Color.fromRGBO(135, 20, 20, 10),
