@@ -24,6 +24,7 @@ Future<List<Product>> searchProduct(String term) async {
   }
 }
 
+
 Future<List<Product>> fetchProduct() async {
   final response = await http.get("http://imtjk.pythonanywhere.com/products/0/100");
   List<Product> products = [];
@@ -162,7 +163,9 @@ class _ReweSalesState extends State<ReweSales> {
 
 
   class Products extends StatelessWidget {
-    @override
+  List<Product> products;
+
+  @override
     Widget build(BuildContext context) {
       return Scaffold(
         backgroundColor: Color.fromRGBO(201, 30, 30, 90),
@@ -175,20 +178,21 @@ class _ReweSalesState extends State<ReweSales> {
             })
           ],
         ),
-        body: Center(
-          child: FutureBuilder<List<Product>>(
-            future: fetchProduct(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                return Image.network(snapshot.data[10].img_src);
-              }
-              else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-              return CircularProgressIndicator();
-            },
-          )
-        )
+        body: FutureBuilder(
+                future: fetchProduct(),
+                builder: (context, AsyncSnapshot snapshot){
+                  if (snapshot.hasData && products.length > 0)
+                    print(products);
+                    return Container(
+                      child: ListView.builder(
+                          itemCount: products.length,
+                          itemBuilder: (BuildContext context, int index){
+                            return new Card(child: ListTile(title: Text(products[index].name), leading: Image.network(products[index].img_src),));
+                          })
+                    );
+
+                  },
+            )
       );
 
   }
