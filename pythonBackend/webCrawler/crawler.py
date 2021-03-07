@@ -22,7 +22,6 @@ class ReweCrawler(object):
     def __init__(self):
         super().__init__()
         self.options = json.load(open(r'pythonBackend\webCrawler\options.json'))
-        self.products = {}
         self.parser = 'html.parser'
         self.scraper = cloudscraper.create_scraper()
     
@@ -36,9 +35,9 @@ class ReweCrawler(object):
             getattr(self, self.options['functions'][option]['function'])(self.options['functions'][option]['url'])
 
     def crawl_sales(self, url):
-        for plz, token in self.config['tokens']:
-            pass
-        
+        for plz, cookie in self.options['cookies'].items():
+            print(str(plz) + "  " + str(cookie))
+
 
     ### gets entirity of products excluding products from the on_sale category
     def crawl_products(self, url, token):
@@ -133,10 +132,13 @@ class ReweCrawler(object):
                                 on_sale = True       
                             else: break                
                         else: 
-                            if div.contents[2].attrs['class'] == ['search-service-productGrammage']:
-                                amount = div.contents[2].contents[0].contents[0].split(' ')[0]
+                            
                             price = float(div.contents[4].contents[0].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
                             on_sale = False
+
+                        if div.contents[2].attrs['class'] == ['search-service-productGrammage']:
+                            amount = div.contents[2].contents[0].contents[0].split(' ')[0]
+
 
                         products.append({
                             'name' : div.contents[1].contents[0].contents[0].text,
@@ -158,5 +160,5 @@ if __name__ == "__main__":
     crawler = ReweCrawler()
 
     #  crawler.start_crawl(option="rewes")
-    crawler.start_crawl(option="rewes")
+    crawler.start_crawl(option="sales")
     pass
