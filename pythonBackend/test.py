@@ -10,11 +10,11 @@ import pandas as pd
 def csv_to_db():
     fields = ['PLZ', 'Stadtteil_Name']
     df = pd.read_csv(r'pythonBackend\rewe.csv', skipinitialspace=True, usecols=fields)
-    mydict = {}
-    for PLZ, Stadtteil_Name in df.values:
+
+    for plz, stadtteil_name in df.values:
         z = Zipcode(
-            id = PLZ,
-            district = Stadtteil_Name
+            id = plz,
+            district = stadtteil_name
         )
         db.session.add(z)
     db.session.commit()

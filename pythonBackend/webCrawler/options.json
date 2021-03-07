@@ -2,7 +2,7 @@
     "functions" : {
         "products" : {
             "function" : "crawl_products",
-            "url" : "https://www.rewe.de/api/marketsearch?searchTerm="
+            "url" : "https://shop.rewe.de"
         },
         "sales" : {
             "function" : "crawl_sales",
@@ -10,7 +10,7 @@
         },
         "rewes" : {
             "function" : "crawl_rewes",
-            "url" : "https://shop.rewe.de"
+            "url" : "https://www.rewe.de/api/marketsearch?searchTerm="
         }
     },
     "cookies" : {
@@ -39,6 +39,7 @@
         "28357" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540902%22%2C%22marketZipCode%22%3A%2228329%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228357%22%7D%2C%22stationary%22%3A%7B%7D%7D",
         "28359" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540902%22%2C%22marketZipCode%22%3A%2228329%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228359%22%7D%2C%22stationary%22%3A%7B%7D%7D",
         "28717" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540683%22%2C%22marketZipCode%22%3A%2227711%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228717%22%7D%2C%22stationary%22%3A%7B%7D%7D",
-        "28757" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540683%22%2C%22marketZipCode%22%3A%2227711%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228757%22%7D%2C%22stationary%22%3A%7B%7D%7D"
+        "28757" : "%7B%22online%22%3A%7B%22wwIdent%22%3A%22540683%22%2C%22marketZipCode%22%3A%2227711%22%2C%22serviceTypes%22%3A%5B%22PICKUP%22%5D%2C%22customerZipCode%22%3A%2228757%22%7D%2C%22stationary%22%3A%7B%7D%7D",
+        "" : ""
     }
 }
