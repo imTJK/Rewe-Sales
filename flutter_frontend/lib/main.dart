@@ -7,8 +7,8 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:logging/logging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:logging/logging.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 import 'sign_up.dart';
 
@@ -253,7 +253,6 @@ class Products extends StatelessWidget {
 }
 
 class DataSearch extends SearchDelegate<String> {
-  var listExample = ['Yes', 'Peter', 'Peter (Dad)'];
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -292,7 +291,7 @@ class DataSearch extends SearchDelegate<String> {
   void getProducts() async {
     this.recentList = await fetchProduct();
   }
-
+@override
   @override
   Widget buildSuggestions(BuildContext context) {
     return Scaffold(
@@ -302,10 +301,12 @@ class DataSearch extends SearchDelegate<String> {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
         } else {
+          itemList = [];
           for (int i = 0; i < snapshot.data.length; i++) {
-            if (snapshot.data[i].name.contains(query.toLowerCase())) {
-              itemList.add(snapshot.data[i]);
-            }
+           if (snapshot.data[i].name.toLowerCase().contains(query.toLowerCase()) && !(itemList.length > 9)) {
+            itemList.add(snapshot.data[i]);
+           }
+
           }
           return Container(
               child: ListView.builder(
