@@ -254,6 +254,15 @@ class Products extends StatelessWidget {
 
 class DataSearch extends SearchDelegate<String> {
 
+  final List<String> list = List.generate(10, (index) => "Text $index");
+  List recentList = [];
+  List itemList = [];
+  String selectedResult;
+
+  void getProducts() async {
+    this.recentList = await fetchProduct();
+  }
+
   @override
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
@@ -275,7 +284,6 @@ class DataSearch extends SearchDelegate<String> {
     );
   }
 
-  String selectedResult;
   @override
   Widget buildResults(BuildContext context) {
     return Container(
@@ -285,13 +293,6 @@ class DataSearch extends SearchDelegate<String> {
     );
   }
 
-  final List<String> list = List.generate(10, (index) => "Text $index");
-  List recentList = [];
-  List itemList = [];
-  void getProducts() async {
-    this.recentList = await fetchProduct();
-  }
-@override
   @override
   Widget buildSuggestions(BuildContext context) {
     return Scaffold(
