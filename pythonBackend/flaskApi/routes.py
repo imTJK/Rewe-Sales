@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(__file__))
 import json
 
 from flaskApi import app, db
-from flaskApi.models import User, Rewe, Product, Discount
+from flaskApi.models import User, Rewe, Product, Discount, Prices
 
 from flask import Flask, request, jsonify
 import sqlite3
@@ -15,11 +15,6 @@ import sqlite3
 
 # temporary SQL #
 
-
-
-
-
-
 ### routing ###
 @app.route('/', methods=['GET'])
 def index():
@@ -28,56 +23,41 @@ def index():
     else:
         return 'Thats some whack stuff'
 
+
 @app.route('/products/<int:page>/<int:amount>', methods=['GET', "POST"])
-def products_json(page, amount):
+def get_sales(page, amount):
+    if 'plz' not in request.args or 'name' not in request.args:
+        return 'invalid Query'
+
     products_dict = {
         "products" : []
     }
+    prices = Prices.query.filter(Prices.rewe_plz.like(request.args['plz']))
+
     if 'category' in request.args:
-        products = Product.query.filter_by(category=request.args['category']).all()
+        products = Product.query.filter(Product.name.contains(request.args['name'])).filter(Product.category.like(request.args['category']))
     else:
-        products = Product.query.all()
+        products = Product.query.filter(Product.name.contains(request.args['name']))
+  
 
-    for i in range(page*amount, (page+1)*amount):
-        products_dict["products"].append(
-            {   
-                'id' : products[i].id,
-                'name' : products[i].name,
-                'price' : products[i].price,
-                'img_src' : products[i].img_src,
-                'category' : products[i].category,
-                'on_sale' : products[i].on_sale
-            }
-        )
-
+    for product in products[page*amount: (page+1)*amount]:
+        for price in prices:
+            if price.product_id == product.id:
+                products_dict['products'].append(
+                    {
+                        'id' : product.id,
+                        'name' : product.name,
+                        'price' : price.price,
+                        'img_src' : product.img_src,
+                        'category' : product.category,
+                        'on_sale_in' : product.on_sale_in
+                    }
+                )
+    if len(products_dict['products'] == 0):
+        return 'No results for: query = {}, plz = {}, category = {}'.format(request.args['name'], request.args['plz'], request.args['category'] if 'category' in request.args else "")
+    
     return json.dumps(products_dict)
            
-
-@app.route('/products', methods=['GET'])
-def filter_products():
-    products_dict = {
-        "products" : []
-    }
-
-    if 'name' in request.args:
-        products = Product.query.filter(Product.name.contains(request.args['name'])).all()
-        for i in range(len(products)):
-            products_dict["products"].append(
-            {   
-                'id' : products[i].id,
-                'name' : products[i].name,
-                'price' : products[i].price,
-                'img_src' : products[i].img_src,
-                'category' : products[i].category,
-                'on_sale' : products[i].on_sale
-            }
-        )
-        return json.dumps(products_dict)
-
-    else:
-        return "invalid request"
-
-
 
 @app.route('/addUser', methods=['POST'])
 def add_user():

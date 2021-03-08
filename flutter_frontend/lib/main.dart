@@ -2,13 +2,14 @@ import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 import 'dart:async';
 import 'dart:convert';
 import 'package:crypto/crypto.dart';
-import 'package:logging/logging.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:logging/logging.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 import 'sign_up.dart';
 
@@ -252,8 +253,80 @@ class Products extends StatelessWidget {
   }
 }
 
+
+class ProductPage extends StatelessWidget{
+  final Product product;
+
+  ProductPage({Key key, @required this.product}) : super(key : key);
+
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      backgroundColor: Color.fromRGBO(201, 30, 30, 100),
+      body : Center (
+        child : new Column(
+          children: [
+            Padding(
+              padding: EdgeInsets.all(12),
+              child : Container (
+                decoration : ShapeDecoration(
+                  color : Color.fromRGBO(201, 30, 30, 100),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))
+              ),
+
+                  child : Text(product.name,
+                  style: TextStyle(
+                    fontSize : 40,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center
+                    ,),
+            )),
+            Padding(
+              padding: EdgeInsets.all(4),
+                child :Container(
+
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromRGBO(241, 136, 5, 1.0),
+                    border: Border.all(width: 4),
+                  ),
+                  child : Image.network(product.img_src))),
+            Container(child : Text(product.price.toString(),
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight : FontWeight.w900
+            ),
+            textAlign: TextAlign.center,))
+          ],
+        )
+      ),
+          appBar: AppBar(
+            backgroundColor: Color.fromRGBO(201, 30, 30, 100),
+        actions: <Widget> [
+          IconButton(
+            icon: Icon(Icons.bug_report),
+            onPressed: (){
+              Navigator.pop(context);
+            },
+
+
+        )
+      ]
+
+    ),
+    );
+  }
+}
+
+
+
 class DataSearch extends SearchDelegate<String> {
-  var listExample = ['Yes', 'Peter', 'Peter (Dad)'];
+
+  final List<String> list = List.generate(10, (index) => "Text $index");
+  List recentList = [];
+  List itemList = [];
+  Product selectedResult;
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -276,21 +349,14 @@ class DataSearch extends SearchDelegate<String> {
     );
   }
 
-  String selectedResult;
   @override
   Widget buildResults(BuildContext context) {
     return Container(
       child: Center(
-        child: Text(selectedResult),
+        child: ListTile(title: Text("Wack"),
+        ),
       ),
     );
-  }
-
-  final List<String> list = List.generate(10, (index) => "Text $index");
-  List recentList = [];
-  List itemList = [];
-  void getProducts() async {
-    this.recentList = await fetchProduct();
   }
 
   @override
@@ -301,24 +367,54 @@ class DataSearch extends SearchDelegate<String> {
       builder: (context, AsyncSnapshot<List<Product>> snapshot) {
         if (!snapshot.hasData) {
           return Center(child: CircularProgressIndicator());
-        } else {
+        }
+        else {
+          itemList = [];
           for (int i = 0; i < snapshot.data.length; i++) {
-            if (snapshot.data[i].name.contains(query.toLowerCase())) {
-              itemList.add(snapshot.data[i]);
-            }
+           if (snapshot.data[i].name.toLowerCase().contains(query.toLowerCase()) && !(itemList.length > 9)) {
+            itemList.add(snapshot.data[i]);
+           }
           }
-          return Container(
+        if(query == ""){
+          itemList = recentList;
+        }
+
+          
+          return GestureDetector(
               child: ListView.builder(
                   itemCount: itemList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return new Card(
+                    return new Card (
                         child: ListTile(
-                      title: Text(itemList[index].name),
-                      leading: Image.network(itemList[index].img_src),
-                    ));
-                  }));
+                           title: Text(itemList[index].name),
+                           leading: Image.network(itemList[index].img_src),
+                          onTap: () {
+                             recentList.add(itemList[index]);
+                             Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProductPage(product: itemList[index]),
+                                ),
+                             );
+                     })
+    );
+    }
+                    ),
+
+
+
+
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              }
+              );
         }
       },
-    ));
+     )
+    );
   }
 }
