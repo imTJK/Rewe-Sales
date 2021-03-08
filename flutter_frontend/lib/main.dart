@@ -257,7 +257,7 @@ class DataSearch extends SearchDelegate<String> {
   final List<String> list = List.generate(10, (index) => "Text $index");
   List recentList = [];
   List itemList = [];
-  String selectedResult;
+  Product selectedResult;
 
   void getProducts() async {
     this.recentList = await fetchProduct();
@@ -288,7 +288,9 @@ class DataSearch extends SearchDelegate<String> {
   Widget buildResults(BuildContext context) {
     return Container(
       child: Center(
-        child: Text(selectedResult),
+        child: ListTile(title: Text(selectedResult.name),
+          leading: Image.network(selectedResult.img_src),
+        ),
       ),
     );
   }
@@ -307,20 +309,35 @@ class DataSearch extends SearchDelegate<String> {
            if (snapshot.data[i].name.toLowerCase().contains(query.toLowerCase()) && !(itemList.length > 9)) {
             itemList.add(snapshot.data[i]);
            }
-
           }
-          return Container(
+          return GestureDetector(
               child: ListView.builder(
                   itemCount: itemList.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return new Card(
+                    return new Card (
                         child: ListTile(
-                      title: Text(itemList[index].name),
-                      leading: Image.network(itemList[index].img_src),
-                    ));
-                  }));
+                           title: Text(itemList[index].name),
+                           leading: Image.network(itemList[index].img_src),
+                          onTap: () {
+                             selectedResult = itemList[index];
+                          },
+                    )
+                    );
+                  }
+                  ),
+
+
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              }
+              );
         }
       },
-    ));
+     )
+    );
   }
 }
