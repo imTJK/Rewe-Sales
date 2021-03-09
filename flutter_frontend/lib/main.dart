@@ -15,25 +15,10 @@ import 'sign_up.dart';
 
 void main() => runApp(MaterialApp(home: ReweSales()));
 
-Future<List<Product>> searchProduct(String term) async {
-  final response =
-      await http.get("http://imtjk.pythonanywhere.com/products?name=${term}");
-  List<Product> products = [];
-  if (response.statusCode == 200) {
-    var parsed_json = jsonDecode(response.body)['products'];
-    for (int i = 0; i < parsed_json.length; i++) {
-      products.add(Product.fromJson(parsed_json[i]));
-    }
-    return products;
-  } else {
-    throw Exception("Failed to load");
-  }
-}
-
 Future<List<Product>> fetchProduct() async {
   final response =
       await http.get("http://imtjk.pythonanywhere.com/products?name=Wurst");
-  print(response);
+
   List<Product> products = [];
   if (response.statusCode == 200) {
     var parsed_json = jsonDecode(response.body)['products'];
@@ -41,7 +26,8 @@ Future<List<Product>> fetchProduct() async {
       products.add(Product.fromJson(parsed_json[i]));
     }
     return products;
-  } else {
+  }
+  else {
     throw Exception("Failed to load");
   }
 }
@@ -54,13 +40,15 @@ class Product {
   final bool on_sale;
   final String img_src;
 
-  Product(
-      {this.id,
-      this.name,
-      this.price,
-      this.category,
-      this.on_sale,
-      this.img_src});
+  Product({
+    this.id,
+    this.name,
+    this.price,
+    this.category,
+    this.on_sale,
+    this.img_src
+  });
+
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
         id: json['id'],
@@ -81,19 +69,23 @@ Future<SignUp> createUser(String name, String email, String passwort) async {
   final String apiUrl = "http://imtjk.pythonanywhere.com/addUser";
 
   final response = await http.post(apiUrl,
-      headers: <String, String>{
-        "Content-Type": "application/json; charset=UTF-8"
-      },
-      body: jsonEncode(<String, String>{
-        "name": name,
-        "email": email,
-        "passwort": sha256.convert(utf8.encode(passwort)).toString()
-      }));
+    headers: <String, String>{
+      "Content-Type": "application/json; charset=UTF-8"
+    },
+    body: jsonEncode(<String, String>{
+      "name": name,
+      "email": email,
+      "passwort": sha256.convert(utf8.encode(passwort)).toString()
+      }
+    )
+  );
+
   print(response.statusCode);
   if (response.statusCode == 200) {
     final String responseString = response.body;
     print(responseString);
-  } else {
+  }
+  else {
     return null;
   }
 }
@@ -115,63 +107,75 @@ class _ReweSalesState extends State<ReweSales> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromRGBO(201, 30, 30, 90),
-        appBar: AppBar(
-          title: Center(child: Text('Anmelden')),
-          backgroundColor: Color.fromRGBO(201, 30, 30, 100),
-        ),
-        body: Center(
-            child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-              Container(
-                  child: Center(
-                      child: Form(
-                          key: _formKey,
-                          child: TextFormField(
-                              controller: _nameController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.name,
-                              decoration: InputDecoration(
-                                errorText: _nameError,
-                                hintText: "Name",
-                              )))),
-                  width: 300,
-                  height: 45,
-                  color: Colors.white70),
-              Container(
-                  child: Center(
-                      child: Form(
-                          key: _formKey2,
-                          child: TextFormField(
-                              controller: _emailController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                errorText: _emailError,
-                                hintText: "E-Mail",
-                              )))),
-                  width: 300,
-                  height: 45,
-                  color: Colors.white70),
-              Container(
-                  child: Center(
-                      child: Form(
-                          key: _formKey3,
-                          child: TextFormField(
-                              controller: _passwortController,
-                              obscureText: true,
-                              keyboardType: TextInputType.visiblePassword,
-                              decoration: InputDecoration(
-                                errorText: _passwordError,
-                                hintText: "Passwort",
-                              )))),
-                  width: 300,
-                  height: 45,
-                  color: Colors.white70),
-              BottomAppBar(
-                  child: TextButton(
+      backgroundColor: Color.fromRGBO(201, 30, 30, 90),
+      appBar: AppBar(
+        title: Center(child: Text('Anmelden')),
+        backgroundColor: Color.fromRGBO(201, 30, 30, 100),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Container(
+              child: Center(
+                child: Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _nameController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                      errorText: _nameError,
+                      hintText: "Name",
+                    )
+                  )
+                )
+              ),
+              width: 300,
+              height: 45,
+              color: Colors.white70
+            ),
+            Container(
+              child: Center(
+                child: Form(
+                  key: _formKey2,
+                  child: TextFormField(
+                    controller: _emailController,
+                    textInputAction: TextInputAction.next,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      errorText: _emailError,
+                      hintText: "E-Mail",
+                    )
+                  )
+                )
+              ),
+              width: 300,
+              height: 45,
+              color: Colors.white70
+            ),
+            Container(
+              child: Center(
+                child: Form(
+                  key: _formKey3,
+                  child: TextFormField(
+                    controller: _passwortController,
+                    obscureText: true,
+                    keyboardType: TextInputType.visiblePassword,
+                    decoration: InputDecoration(
+                      errorText: _passwordError,
+                      hintText: "Passwort",
+                            )
+                  )
+                )
+              ),
+              width: 300,
+              height: 45,
+              color: Colors.white70
+            ),
+            BottomAppBar(
+              child: TextButton(
                 onPressed: () async {
                   final String name = _nameController.text;
                   final String email = _emailController.text;
@@ -184,31 +188,42 @@ class _ReweSalesState extends State<ReweSales> {
                   });
 
                   print("name: " +
-                      _nameController.text +
-                      "\nE-Mail: " +
-                      _emailController.text +
-                      "\nPasswort: ${sha256.convert(utf8.encode(_passwortController.text)).bytes}");
+                    _nameController.text +
+                    "\nE-Mail: " +
+                    _emailController.text +
+                    "\nPasswort: ${sha256.convert(utf8.encode(_passwortController.text)).bytes}"
+                  );
                   setState(() {
-                    if (_nameController.text.length < 1)
+                    if (_nameController.text.length < 1){
                       _nameError = "Geben sie einen Namen ein";
-                    else
+                    }
+                    else {
                       _nameError = null;
-                    if (_emailController.text.contains("@") != true)
+                    }
+                    if (_emailController.text.contains("@") != true){
                       _emailError = "Geben sie eine Email ein";
-                    else
+                    }
+                    else{
                       _emailError = null;
-                    if (_passwortController.text.length < 8)
+                    }
+                    });
+                    if (_passwortController.text.length < 8){
                       _passwordError = "Geben sie mindestens 8 Zeichen ein";
+                    }
                     else {
                       _passwordError = null;
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Products()));
+                          MaterialPageRoute(builder: (context) => Products())
+                      );
                     }
-                  });
-                },
+                  },
                 child: Text('Anmelden'),
-              ))
-            ])));
+              )
+            )
+          ]
+        )
+      )
+    );
   }
 }
 
@@ -218,38 +233,44 @@ class Products extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: Color.fromRGBO(201, 30, 30, 90),
-        appBar: AppBar(
-          title: Center(child: Text('Produkte')),
-          backgroundColor: Color.fromRGBO(201, 30, 30, 100),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(context: context, delegate: DataSearch());
-                })
-          ],
-        ),
-        body: FutureBuilder(
-          future: fetchProduct(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              print(snapshot);
-              return Center(child: CircularProgressIndicator());
-            } else {
-              return Container(
-                  child: ListView.builder(
-                      itemCount: snapshot.data.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return new Card(
-                            child: ListTile(
-                          title: Text(snapshot.data[index].name),
-                          leading: Image.network(snapshot.data[index].img_src),
-                        ));
-                      }));
+      backgroundColor: Color.fromRGBO(201, 30, 30, 90),
+      appBar: AppBar(
+        title: Center(child: Text('Produkte')),
+        backgroundColor: Color.fromRGBO(201, 30, 30, 100),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              showSearch(context: context, delegate: DataSearch());
             }
-          },
-        ));
+          )
+        ],
+      ),
+      body: FutureBuilder(
+        future: fetchProduct(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            print(snapshot);
+            return Center(child: CircularProgressIndicator());
+          }
+          else {
+            return Container(
+              child: ListView.builder(
+                itemCount: snapshot.data.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return new Card(
+                    child: ListTile(
+                      title: Text(snapshot.data[index].name),
+                      leading: Image.network(snapshot.data[index].img_src),
+                    )
+                  );
+                }
+              )
+            );
+          }
+        },
+      )
+    );
   }
 }
 
@@ -272,49 +293,51 @@ class ProductPage extends StatelessWidget{
                 decoration : ShapeDecoration(
                   color : Color.fromRGBO(201, 30, 30, 100),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))
-              ),
-
-                  child : Text(product.name,
+                ),
+                child : Text(product.name,
                   style: TextStyle(
                     fontSize : 40,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.bold
                   ),
                   textAlign: TextAlign.center
-                    ,),
-            )),
+                ),
+              )
+            ),
             Padding(
               padding: EdgeInsets.all(4),
-                child :Container(
+              child : Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color.fromRGBO(241, 136, 5, 1.0),
+                  border: Border.all(width: 4),
+                ),
 
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color.fromRGBO(241, 136, 5, 1.0),
-                    border: Border.all(width: 4),
-                  ),
-                  child : Image.network(product.img_src))),
-            Container(child : Text(product.price.toString(),
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight : FontWeight.w900
+                child : Image.network(
+                    product.img_src)
+              )
             ),
-            textAlign: TextAlign.center,))
+            Container(
+              child : Text(product.price.toString(),
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight : FontWeight.w900
+              ),
+              textAlign: TextAlign.center)
+            )
           ],
         )
       ),
-          appBar: AppBar(
-            backgroundColor: Color.fromRGBO(201, 30, 30, 100),
-        actions: <Widget> [
-          IconButton(
-            icon: Icon(Icons.bug_report),
-            onPressed: (){
-              Navigator.pop(context);
-            },
-
-
-        )
-      ]
-
-    ),
+        appBar: AppBar(
+          backgroundColor: Color.fromRGBO(201, 30, 30, 100),
+          actions: <Widget> [
+            IconButton(
+              icon: Icon(Icons.bug_report),
+              onPressed: (){
+                Navigator.pop(context);
+              },
+            )
+          ]
+        ),
     );
   }
 }
@@ -322,7 +345,6 @@ class ProductPage extends StatelessWidget{
 
 
 class DataSearch extends SearchDelegate<String> {
-
   final List<String> list = List.generate(10, (index) => "Text $index");
   List recentList = [];
   List itemList = [];
@@ -332,10 +354,11 @@ class DataSearch extends SearchDelegate<String> {
   List<Widget> buildActions(BuildContext context) {
     return <Widget>[
       IconButton(
-          icon: Icon(Icons.clear),
-          onPressed: () {
-            query = "";
-          })
+        icon: Icon(Icons.clear),
+        onPressed: () {
+          query = "";
+        }
+      )
     ];
   }
 
@@ -362,59 +385,53 @@ class DataSearch extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return Scaffold(
-        body: FutureBuilder(
-      future: fetchProduct(),
-      builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
-        else {
-          itemList = [];
-          for (int i = 0; i < snapshot.data.length; i++) {
-           if (snapshot.data[i].name.toLowerCase().contains(query.toLowerCase()) && !(itemList.length > 9)) {
-            itemList.add(snapshot.data[i]);
-           }
+      body: FutureBuilder(
+        future: fetchProduct(),
+        builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
           }
-        if(query == ""){
-          itemList = recentList;
-        }
-
-          
-          return GestureDetector(
-              child: ListView.builder(
+          else {
+            itemList = [];
+            for (int i = 0; i < snapshot.data.length; i++) {
+              if (snapshot.data[i].name.toLowerCase().contains(query.toLowerCase()) && !(itemList.length > 9)) {
+                itemList.add(snapshot.data[i]);
+              }
+            }
+            if(query == ""){
+              itemList = recentList;
+            }
+            return GestureDetector(
+                child: ListView.builder(
                   itemCount: itemList.length,
                   itemBuilder: (BuildContext context, int index) {
                     return new Card (
-                        child: ListTile(
-                           title: Text(itemList[index].name),
-                           leading: Image.network(itemList[index].img_src),
-                          onTap: () {
-                             recentList.add(itemList[index]);
-                             Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProductPage(product: itemList[index]),
-                                ),
-                             );
-                     })
-    );
-    }
-                    ),
-
-
-
-
-              onTap: () {
-                FocusScopeNode currentFocus = FocusScope.of(context);
-
-                if (!currentFocus.hasPrimaryFocus) {
-                  currentFocus.unfocus();
+                      child: ListTile(
+                        title: Text(itemList[index].name),
+                        leading: Image.network(itemList[index].img_src),
+                        onTap: () {
+                          recentList.add(itemList[index]);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => ProductPage(product: itemList[index]),
+                            ),
+                         );
+                       }
+                     )
+                   );
+                  }
+                ),
+                onTap: () {
+                  FocusScopeNode currentFocus = FocusScope.of(context);
+                  if (!currentFocus.hasPrimaryFocus) {
+                    currentFocus.unfocus();
                 }
               }
-              );
-        }
-      },
-     )
+            );
+          }
+        },
+      )
     );
   }
 }
