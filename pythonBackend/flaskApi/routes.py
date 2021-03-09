@@ -6,6 +6,8 @@ import json
 from flaskApi import app, db
 from flaskApi.models import User, Rewe, Product, Discount, Prices
 
+from sqlalchemy import and_
+
 from flask import Flask, request, jsonify
 import sqlite3
 
@@ -26,36 +28,35 @@ def index():
 
 @app.route('/products/<int:page>/<int:amount>', methods=['GET', "POST"])
 def get_sales(page, amount):
-    if 'plz' not in request.args or 'name' not in request.args:
+    if 'name' not in request.args:
         return 'invalid Query'
 
     products_dict = {
         "products" : []
     }
-    prices = Prices.query.filter(Prices.rewe_plz.like(request.args['plz']))
 
-    if 'category' in request.args:
-        products = Product.query.filter(Product.name.contains(request.args['name'])).filter(Product.category.like(request.args['category']))
-    else:
-        products = Product.query.filter(Product.name.contains(request.args['name']))
-  
+    products = Product.query.filter(
+        and_(
+        Product.name.contains(request.args.get('name')),
+        Product.category == request.args.get('category') if 'category' in request.args else True
+        )
+    ).all()
 
-    for product in products[page*amount: (page+1)*amount]:
-        for price in prices:
-            if price.product_id == product.id:
-                products_dict['products'].append(
+    for i in range(page*amount, (page+1)*amount):
+        if i == len(products) - 1:
+            break
+        price = Prices.query.filter_by(id = products[i].id).first()
+        if price != None:
+           products_dict['products'].append(
                     {
-                        'id' : product.id,
-                        'name' : product.name,
+                        'id' : products[i].id,
+                        'name' : products[i].name,
                         'price' : price.price,
-                        'img_src' : product.img_src,
-                        'category' : product.category,
-                        'on_sale_in' : product.on_sale_in
-                    }
-                )
-    if len(products_dict['products'] == 0):
-        return 'No results for: query = {}, plz = {}, category = {}'.format(request.args['name'], request.args['plz'], request.args['category'] if 'category' in request.args else "")
-    
+                        'img_src' : products[i].img_src,
+                        'category' : products[i].category,
+                        'on_sale_in' : products[i].on_sale_in
+                    })
+
     return json.dumps(products_dict)
            
 

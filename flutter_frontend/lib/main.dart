@@ -19,7 +19,7 @@ void main() => runApp(MaterialApp(home: Authentication()));
 /// Functions ///
 Future<List<Product>> fetchProduct() async {
   final response =
-      await http.get("http://imtjk.pythonanywhere.com/products?name=Wurst");
+      await http.get("http://imTJK.pythonanywhere.com/products/0/25?name=wurst");
 
   List<Product> products = [];
   if (response.statusCode == 200) {
@@ -69,7 +69,7 @@ class Product {
   final String name;
   final double price;
   final String category;
-  final bool on_sale;
+  final String on_sale_in;
   final String img_src;
 
   Product({
@@ -77,7 +77,7 @@ class Product {
     this.name,
     this.price,
     this.category,
-    this.on_sale,
+    this.on_sale_in,
     this.img_src
   });
 
@@ -85,9 +85,9 @@ class Product {
     return Product(
         id: json['id'],
         name: json['name'],
-        price: json['price'],
+        price: double.parse(json['price']),
         category: json['category'],
-        on_sale: json['on_sale'],
+        on_sale_in: json['on_sale_in'],
         img_src: json['img_src']);
   }
 }
@@ -192,7 +192,15 @@ class ProductPage extends StatelessWidget{
                           fontWeight : FontWeight.w900
                       ),
                       textAlign: TextAlign.center)
-              )
+              ),
+              product.on_sale_in != null ? Container(
+               child : Text("On Sale in " + product.on_sale_in.toString(),
+                 style: TextStyle(
+                   fontSize: 20,
+                   fontStyle: FontStyle.italic
+                  ),
+                )
+              ): Container(child: Text("not on sale"))
             ],
           )
       ),
