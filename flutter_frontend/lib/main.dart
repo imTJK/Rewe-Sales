@@ -44,7 +44,7 @@ Future<List<Product>> fetchProduct(
 
 /// parses User-Data from Authentication to python-Backend, hashes password
 Future<SignUp> createUser(
-    String name, String email, String passwort, DateTime createdAt) async {
+    String name, String email, String password, DateTime createdAt) async {
   final String apiUrl = "http://imtjk.pythonanywhere.com/register";
 
   final response = await http.post(apiUrl,
@@ -54,7 +54,7 @@ Future<SignUp> createUser(
       body: jsonEncode(<String, String>{
         "name": name,
         "email": email,
-        "passwort": sha256.convert(utf8.encode(passwort)).toString(),
+        "password": sha256.convert(utf8.encode(password)).toString(),
         "created_at": createdAt.toString()
       }));
   var parsedJson = jsonDecode(response.body);
@@ -171,11 +171,23 @@ class ProductPage extends StatelessWidget {
                     color: Color.fromRGBO(241, 136, 5, 1.0),
                     border: Border.all(width: 4),
                   ),
-                  child: Image.network(product.img_src))),
+                  child: Image.network(product.img_src,
+                      width: 300, height: 300, fit: BoxFit.fill))),
           Container(
               child: Text(product.price.toString(),
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
                   textAlign: TextAlign.center)),
+          product.on_sale_in != null
+              ? Container(
+                  child: Text(
+                  "On Sale in " + product.on_sale_in.toString(),
+                  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
+                ))
+              : Container(
+                  child: Text(product.price.toString(),
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                      textAlign: TextAlign.center)),
           product.on_sale_in != null
               ? Container(
                   child: Text(
@@ -364,46 +376,42 @@ class DataSearch extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return Scaffold(
+        backgroundColor: Color.fromRGBO(201, 30, 30, 1),
         body: FutureBuilder(
-      future: fetchProduct({"name": query.toLowerCase()}, 10, 0),
-      builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        } else {
-          itemList = [];
-          if (query == "" || snapshot.data.length == 0) {
-            itemList = recentList;
-          }
-          return GestureDetector(
-              child: ListView.builder(
-                  itemCount: itemList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return new Card(
-                        child: ListTile(
-                            title: Text(itemList[index].name),
-                            leading: Image.network(itemList[index].img_src),
-                            onTap: () {
-                              if (!recentList.contains(itemList[index])) {
-                                recentList.add(itemList[index]);
-                              }
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProductPage(product: itemList[index]),
-                                ),
-                              );
-                            }));
-                  }),
-              onTap: () {
-                FocusScopeNode currentFocus = FocusScope.of(context);
-                if (!currentFocus.hasPrimaryFocus) {
-                  currentFocus.unfocus();
-                }
-              });
-        }
-      },
-    ));
+          future: fetchProduct({"name": ""}, 100, 0),
+          builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
+            }
+            return GestureDetector(
+                child: ListView.builder(
+                    itemCount: itemList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return new Card(
+                          child: ListTile(
+                              title: Text(itemList[index].name),
+                              onTap: () {
+                                if (!recentList.contains(itemList[index])) {
+                                  recentList.add(itemList[index]);
+                                }
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProductPage(product: itemList[index]),
+                                  ),
+                                );
+                              }),
+                          shadowColor: Colors.black);
+                    }),
+                onTap: () {
+                  FocusScopeNode currentFocus = FocusScope.of(context);
+                  if (!currentFocus.hasPrimaryFocus) {
+                    currentFocus.unfocus();
+                  }
+                });
+          },
+        ));
   }
 }
 
