@@ -180,9 +180,13 @@ class ProductPage extends StatelessWidget{
                         color: Color.fromRGBO(241, 136, 5, 1.0),
                         border: Border.all(width: 4),
                       ),
-
                       child : Image.network(
-                          product.img_src)
+                          product.img_src,
+                          width: 300,
+                          height: 300,
+                          fit: BoxFit.fill
+                      )
+
                   )
               ),
               Container(
@@ -406,6 +410,8 @@ class DataSearch extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return Scaffold(
+
+      backgroundColor: Color.fromRGBO(201, 30, 30, 1),
       body: FutureBuilder(
         future: fetchProduct(),
         builder: (context, AsyncSnapshot<List<Product>> snapshot) {
@@ -429,7 +435,6 @@ class DataSearch extends SearchDelegate<String> {
                     return new Card (
                       child: ListTile(
                         title: Text(itemList[index].name),
-                        leading: Image.network(itemList[index].img_src),
                         onTap: () {
                           recentList.add(itemList[index]);
                           Navigator.push(
@@ -439,7 +444,8 @@ class DataSearch extends SearchDelegate<String> {
                             ),
                          );
                        }
-                     )
+                     ),
+                      shadowColor: Colors.black
                    );
                   }
                 ),
