@@ -17,26 +17,41 @@ void main() => runApp(MaterialApp(home: Authentication()));
 
 
 /// Functions ///
-Future<List<Product>> fetchProduct() async {
-  final response =
-      await http.get("http://imTJK.pythonanywhere.com/products/0/25?name=wurst");
+Future<List<Product>> fetchProduct(
+    Map<String, String> args, int amount, int page) async {
+  /// url-options
+  /// page = page of results your on
+  /// amount = how many results to return
+  /// category = category of products, equals
+  /// name = name of products, contains
+  /// on_sale = boolean, checks if products is on sale
+  /// plz = zipcode of the rewe the user is looking for (watchlist)
+  String url = "http://imTJK.pythonanywhere.com/products/$page/$amount?";
+  if (args.entries.length > 0) {
+    for (MapEntry<String, String> arg in args.entries) {
+      url = url + arg.key.toString() + "=" + arg.value.toString() + "&";
+    }
+  } else {
+    throw Exception("Failed request");
+  }
+  final response = await http.get(url);
 
   List<Product> products = [];
   if (response.statusCode == 200) {
-    var parsed_json = jsonDecode(response.body)['products'];
-    for (int i = 0; i < parsed_json.length; i++) {
-      products.add(Product.fromJson(parsed_json[i]));
+    var parsedJson = jsonDecode(response.body)['products'];
+    for (int i = 0; i < parsedJson.length; i++) {
+      products.add(Product.fromJson(parsedJson[i]));
     }
     return products;
-  }
-  else {
+  } else {
     throw Exception("Failed to load");
   }
 }
 
-  /// parses User-Data from Authentication to python-Backend, hashes password
-Future<SignUp> parseUser(String name, String email, String passwort) async {
-  final String apiUrl = "http://imtjk.pythonanywhere.com/addUser";
+/// parses User-Data from Authentication to python-Backend, hashes password
+Future<SignUp> createUser(
+    String name, String email, String password, DateTime createdAt) async {
+  final String apiUrl = "http://imtjk.pythonanywhere.com/register";
 
   final response = await http.post(apiUrl,
       headers: <String, String>{
@@ -45,23 +60,17 @@ Future<SignUp> parseUser(String name, String email, String passwort) async {
       body: jsonEncode(<String, String>{
         "name": name,
         "email": email,
-        "passwort": sha256.convert(utf8.encode(passwort)).toString()
-      })
-  );
-
-  print(response.statusCode);
-  if (response.statusCode == 200) {
-    final String responseString = response.body;
-    print(responseString);
-  }
-  else {
+        "password": sha256.convert(utf8.encode(password)).toString(),
+        "created_at": createdAt.toString()
+      }));
+  var parsedJson = jsonDecode(response.body);
+  if (response.statusCode == 200 || parsedJson['Error'] != null) {
+  } else {
     return null;
   }
 }
+
 /// end Functions ///
-
-
-
 
 /// general Classes ///
 class Product {
@@ -72,14 +81,13 @@ class Product {
   final String on_sale_in;
   final String img_src;
 
-  Product({
-    this.id,
-    this.name,
-    this.price,
-    this.category,
-    this.on_sale_in,
-    this.img_src
-  });
+  Product(
+      {this.id,
+      this.name,
+      this.price,
+      this.category,
+      this.on_sale_in,
+      this.img_src});
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
@@ -91,11 +99,11 @@ class Product {
         img_src: json['img_src']);
   }
 }
+
 /// end general Classes ///
 
-
 /// Page-Classes ///
-  /// Home-Page
+/// Home-Page
 class Products extends StatelessWidget {
   List<Product> products;
 
@@ -111,12 +119,11 @@ class Products extends StatelessWidget {
                 icon: Icon(Icons.search),
                 onPressed: () {
                   showSearch(context: context, delegate: DataSearch());
-                }
-            )
+                })
           ],
         ),
         body: FutureBuilder(
-          future: fetchProduct(),
+          future: fetchProduct({"name": "wurst"}, 25, 0),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               print(snapshot);
@@ -147,79 +154,75 @@ class Products extends StatelessWidget {
 class ProductPage extends StatelessWidget{
   final Product product;
 
-  ProductPage({Key key, @required this.product}) : super(key : key);
+  ProductPage({Key key, @required this.product}) : super(key: key);
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(201, 30, 30, 100),
-      body : Center (
-          child : new Column(
-            children: [
-              Padding(
-                  padding: EdgeInsets.all(12),
-                  child : Container (
-                    decoration : ShapeDecoration(
-                        color : Color.fromRGBO(201, 30, 30, 100),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(10)))
-                    ),
-                    child : Text(product.name,
-                        style: TextStyle(
-                            fontSize : 40,
-                            fontWeight: FontWeight.bold
-                        ),
-                        textAlign: TextAlign.center
-                    ),
-                  )
-              ),
-              Padding(
-                  padding: EdgeInsets.all(4),
-                  child : Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color.fromRGBO(241, 136, 5, 1.0),
-                        border: Border.all(width: 4),
-                      ),
-
-                      child : Image.network(
-                          product.img_src)
-                  )
-              ),
-              Container(
-                  child : Text(product.price.toString(),
-                      style: TextStyle(
-                          fontSize: 25,
-                          fontWeight : FontWeight.w900
-                      ),
-                      textAlign: TextAlign.center)
-              ),
-              product.on_sale_in != null ? Container(
-               child : Text("On Sale in " + product.on_sale_in.toString(),
-                 style: TextStyle(
-                   fontSize: 20,
-                   fontStyle: FontStyle.italic
+      body: Center(
+          child: new Column(
+        children: [
+          Padding(
+              padding: EdgeInsets.all(12),
+              child: Container(
+                decoration: ShapeDecoration(
+                    color: Color.fromRGBO(201, 30, 30, 100),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10)))),
+                child: Text(product.name,
+                    style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center),
+              )),
+          Padding(
+              padding: EdgeInsets.all(4),
+              child: Container(
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color.fromRGBO(241, 136, 5, 1.0),
+                    border: Border.all(width: 4),
                   ),
-                )
-              ): Container(child: Text("not on sale"))
-            ],
-          )
-      ),
+                  child: Image.network(product.img_src,
+                      width: 300, height: 300, fit: BoxFit.fill))),
+          Container(
+              child: Text(product.price.toString(),
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                  textAlign: TextAlign.center)),
+          product.on_sale_in != null
+              ? Container(
+                  child: Text(
+                  "On Sale in " + product.on_sale_in.toString(),
+                  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
+                ))
+              : Container(
+                  child: Text(product.price.toString(),
+                      style:
+                          TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
+                      textAlign: TextAlign.center)),
+          product.on_sale_in != null
+              ? Container(
+                  child: Text(
+                  "On Sale in " + product.on_sale_in.toString(),
+                  style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic),
+                ))
+              : Container(child: Text("not on sale"))
+        ],
+      )),
       appBar: AppBar(
           backgroundColor: Color.fromRGBO(201, 30, 30, 100),
-          actions: <Widget> [
+          actions: <Widget>[
             IconButton(
               icon: Icon(Icons.bug_report),
-              onPressed: (){
+              onPressed: () {
                 Navigator.pop(context);
               },
             )
-          ]
-      ),
+          ]),
     );
   }
 }
 
-  /// Sign-up-/Login-Page
+/// Sign-up-/Login-Page
 class Authentication extends StatefulWidget {
   @override
   _AuthenticationState createState() => _AuthenticationState();
@@ -320,12 +323,6 @@ class _AuthenticationState extends State<Authentication> {
                       final String name = _nameController.text;
                       final String email = _emailController.text;
                       final String passwort = _passwortController.text;
-
-                      final SignUp user = await parseUser(name, email, passwort);
-
-                    setState(() {
-                      _user = user;
-                  });
 
                       print("name: " +
                       _nameController.text +
@@ -495,11 +492,9 @@ class _RegisterState extends State<RegisterPage> {
                                 final String email = _emailController.text;
                                 final String passwort = _passwortController.text;
 
-                                final SignUp user = await parseUser(name, email, passwort);
+                  //final SignUp user = await createUser(name, email, passwort, DateTime.now());
 
-                                setState(() {
-                                  _user = user;
-                                });
+                  //  setState(() {_user = user;});
 
                                 print("name: " +
                                     _nameController.text +
@@ -550,7 +545,7 @@ class _RegisterState extends State<RegisterPage> {
 }
 
 
-  /// Search-Page/Function
+/// Search-Page/Function
 class DataSearch extends SearchDelegate<String> {
   final List<String> list = List.generate(10, (index) => "Text $index");
   List recentList = [];
@@ -583,7 +578,8 @@ class DataSearch extends SearchDelegate<String> {
   Widget buildResults(BuildContext context) {
     return Container(
       child: Center(
-        child: ListTile(title: Text("Wack"),
+        child: ListTile(
+          title: Text("Wack"),
         ),
       ),
     );
@@ -592,54 +588,43 @@ class DataSearch extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     return Scaffold(
-      body: FutureBuilder(
-        future: fetchProduct(),
-        builder: (context, AsyncSnapshot<List<Product>> snapshot) {
-          if (!snapshot.hasData) {
-            return Center(child: CircularProgressIndicator());
-          }
-          else {
-            itemList = [];
-            for (int i = 0; i < snapshot.data.length; i++) {
-              if (snapshot.data[i].name.toLowerCase().contains(query.toLowerCase()) && !(itemList.length > 9)) {
-                itemList.add(snapshot.data[i]);
-              }
-            }
-            if(query == ""){
-              itemList = recentList;
+        backgroundColor: Color.fromRGBO(201, 30, 30, 1),
+        body: FutureBuilder(
+          future: fetchProduct({"name": "wurst"}, 100, 0),
+          builder: (context, AsyncSnapshot<List<Product>> snapshot) {
+            if (!snapshot.hasData) {
+              return Center(child: CircularProgressIndicator());
             }
             return GestureDetector(
                 child: ListView.builder(
-                  itemCount: itemList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return new Card (
-                      child: ListTile(
-                        title: Text(itemList[index].name),
-                        leading: Image.network(itemList[index].img_src),
-                        onTap: () {
-                          recentList.add(itemList[index]);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ProductPage(product: itemList[index]),
-                            ),
-                         );
-                       }
-                     )
-                   );
-                  }
-                ),
+                    itemCount: itemList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return new Card(
+                          child: ListTile(
+                              title: Text(itemList[index].name),
+                              onTap: () {
+                                if (!recentList.contains(itemList[index])) {
+                                  recentList.add(itemList[index]);
+                                }
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        ProductPage(product: itemList[index]),
+                                  ),
+                                );
+                              }),
+                          shadowColor: Colors.black);
+                    }),
                 onTap: () {
                   FocusScopeNode currentFocus = FocusScope.of(context);
                   if (!currentFocus.hasPrimaryFocus) {
                     currentFocus.unfocus();
-                }
-              }
-            );
-          }
-        },
-      )
-    );
+                  }
+                });
+          },
+        ));
   }
 }
+
 /// end Page-Classes ///
