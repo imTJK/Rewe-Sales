@@ -379,27 +379,28 @@ class DataSearch extends SearchDelegate<String> {
     return Scaffold(
         backgroundColor: Color.fromRGBO(201, 30, 30, 1),
         body: FutureBuilder(
-          future: fetchProduct({"name": "wurst"}, 100, 0),
+          future: fetchProduct({"name": query}, 100, 0),
           builder: (context, AsyncSnapshot<List<Product>> snapshot) {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
             }
             return GestureDetector(
                 child: ListView.builder(
-                    itemCount: itemList.length,
+                    itemCount: snapshot.data.length,
                     itemBuilder: (BuildContext context, int index) {
                       return new Card(
                           child: ListTile(
-                              title: Text(itemList[index].name),
+                              title: Text(snapshot.data[index].name),
                               onTap: () {
-                                if (!recentList.contains(itemList[index])) {
-                                  recentList.add(itemList[index]);
+                                if (!recentList
+                                    .contains(snapshot.data[index])) {
+                                  recentList.add(snapshot.data[index]);
                                 }
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        ProductPage(product: itemList[index]),
+                                    builder: (context) => ProductPage(
+                                        product: snapshot.data[index]),
                                   ),
                                 );
                               }),
