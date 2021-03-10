@@ -1,6 +1,6 @@
 
 from flaskApi import app, db
-from flaskApi.models import User, Zipcode, Rewe, Product, Discount
+from flaskApi.models import User, Zipcode, Rewe, Product
 
 from webCrawler.crawler import ReweCrawler
 
@@ -20,3 +20,5 @@ def csv_to_db():
     db.session.commit()
 
 
+if __name__ == "__main__":
+    csv_to_db()

@@ -4,7 +4,7 @@ sys.path.append(os.path.dirname(__file__))
 import json
 
 from flaskApi import app, db
-from flaskApi.models import User, Rewe, Product, Discount, Prices
+from flaskApi.models import User, Rewe, Product
 
 from sqlalchemy import and_
 
@@ -38,30 +38,35 @@ def get_sales(page, amount):
     products = Product.query.filter(
         and_(
         Product.name.contains(request.args.get('name')),
-        Product.category == request.args.get('category') if 'category' in request.args else True
+        Product.category == request.args.get('category') if 'category' in request.args else True,
+        Product.on_sale == request.args.get('on_sale') if 'on_sale' in request.args else False
         )
     ).all()
 
     for i in range(page*amount, (page+1)*amount):
         if i == len(products) - 1:
             break
-        price = Prices.query.filter_by(id = products[i].id).first()
-        if price != None:
-           products_dict['products'].append(
-                    {
-                        'id' : products[i].id,
-                        'name' : products[i].name,
-                        'price' : price.price,
-                        'img_src' : products[i].img_src,
-                        'category' : products[i].category,
-                        'on_sale_in' : products[i].on_sale_in
-                    })
+        products_dict['products'].append(
+                {
+                    'id' : products[i].id,
+                    'name' : products[i].name,
+                    'price' : products[i].price,
+                    'img_src' : products[i].img_src,
+                    'category' : products[i].category,
+                    'on_sale_in' : products[i].on_sale_in
+                })
 
     return json.dumps(products_dict)
-           
 
-@app.route('/addUser', methods=['POST'])
-def add_user():
+
+@app.route('/login', methods=['POST'])
+def login_user():
+    if request.is_json():
+        pass
+
+
+@app.route('/register', methods=['POST'])
+def register_user():
     if request.is_json():
         content = request.get_json()
         
@@ -71,12 +76,8 @@ def add_user():
         elif User.query.filter_by(name = content['name']).first() != None:
             return(str(json.dump({"Error" : "This Username is already in use"})))
 
-        newUser = User(
-            name = content['email'],
-            email = content['email'],
-            password_hash = content['passwort'],
-        )
-
+        
         return 'JSON posted: {}'.format(str(json.loads(content)))
 
     return(str(json.loads({"Error" : "No Json posted"})))
+    

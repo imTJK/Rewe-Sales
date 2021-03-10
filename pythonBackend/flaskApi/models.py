@@ -26,18 +26,8 @@ class Rewe(db.Model):
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), index=True)
+    price = db.Column(db.Float)
     img_src = db.Column(db.String(120))
     category = db.Column(db.String(30), index=True)
-    on_sale_in = db.Column(db.String(255), index=True)
-
-class Prices(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
     rewe_plz = db.Column(db.Integer, db.ForeignKey('rewe.plz'))
-    price = db.Column(db.String(10), index = True)
-    on_sale = db.Column(db.Boolean(), default = False)
-
-class Discount(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    rewe_id = db.Column(db.Integer, db.ForeignKey('rewe.id'))
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    on_sale = db.Column(db.Boolean, index=True, default = False)
