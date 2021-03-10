@@ -24,9 +24,13 @@ Future<List<Product>> fetchProduct(
   /// name = name of products, contains
   /// on_sale = boolean, checks if products is on sale
   /// plz = zipcode of the rewe the user is looking for (watchlist)
-  String url = "http://imTJK.pythonanywhere.com/products/$amount/$page?";
-  for (MapEntry<String, String> arg in args.entries) {
-    url = url + arg.key.toString() + "=" + arg.value.toString() + "&";
+  String url = "http://imTJK.pythonanywhere.com/products/$page/$amount?";
+  if (args.entries.length > 0) {
+    for (MapEntry<String, String> arg in args.entries) {
+      url = url + arg.key.toString() + "=" + arg.value.toString() + "&";
+    }
+  } else {
+    throw Exception("Failed request");
   }
   final response = await http.get(url);
 
@@ -117,7 +121,7 @@ class Products extends StatelessWidget {
           ],
         ),
         body: FutureBuilder(
-          future: fetchProduct({"": ""}, 25, 0),
+          future: fetchProduct({"name": "wurst"}, 25, 0),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               print(snapshot);
@@ -296,12 +300,9 @@ class _AuthenticationState extends State<Authentication> {
                   final String email = _emailController.text;
                   final String passwort = _passwortController.text;
 
-                  final SignUp user =
-                      await createUser(name, email, passwort, DateTime.now());
+                  //final SignUp user = await createUser(name, email, passwort, DateTime.now());
 
-                  setState(() {
-                    _user = user;
-                  });
+                  //  setState(() {_user = user;});
 
                   print("name: " +
                       _nameController.text +
@@ -378,7 +379,7 @@ class DataSearch extends SearchDelegate<String> {
     return Scaffold(
         backgroundColor: Color.fromRGBO(201, 30, 30, 1),
         body: FutureBuilder(
-          future: fetchProduct({"name": ""}, 100, 0),
+          future: fetchProduct({"name": "wurst"}, 100, 0),
           builder: (context, AsyncSnapshot<List<Product>> snapshot) {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
