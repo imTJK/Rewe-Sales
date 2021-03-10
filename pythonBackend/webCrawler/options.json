@@ -4,9 +4,17 @@
             "function" : "crawl_products",
             "url" : "https://shop.rewe.de"
         },
+        "sales" : {
+            "function" : "crawl_sales",
+            "url" : "https://shop.rewe.de"
+        },
         "rewes" : {
             "function" : "crawl_rewes",
             "url" : "https://www.rewe.de/api/marketsearch?searchTerm="
+        },
+        "prices" : {
+            "function" : "crawl_prices",
+            "url" : "https://shop.rewe.de"
         }
     },
     "cookies" : {
