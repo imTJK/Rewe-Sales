@@ -76,7 +76,11 @@ def register_user():
         elif User.query.filter_by(name = content['name']).first() != None:
             return(str(json.dump({"Error" : "This Username is already in use"})))
 
-        
+        newUser = User(
+            name = content['email'],
+            email = content['email'],
+            password_hash = content['passwort'],
+        )
 
 
         return 'JSON posted: {}'.format(str(json.loads(content)))
