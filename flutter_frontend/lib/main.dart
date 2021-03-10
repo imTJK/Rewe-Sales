@@ -11,6 +11,8 @@ import 'package:crypto/crypto.dart';
 //import 'package:logging/logging.dart';
 //import 'package:shared_preferences/shared_preferences.dart';
 
+//Hallo Tjorven
+
 import 'sign_up.dart';
 
 void main() => runApp(MaterialApp(home: Authentication()));
