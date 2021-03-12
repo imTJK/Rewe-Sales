@@ -144,7 +144,7 @@ class _RegisterState extends State<RegisterPage> {
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwortController = TextEditingController();
   TextEditingController _passwortController2 = TextEditingController();
-
+  void setErrorMessage(TextEditingController _controller) {}
   String _nameError;
   String _emailError;
   String _passwordError;

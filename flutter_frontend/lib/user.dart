@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:crypto/crypto.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 
 User userFromJson(String str) => User.fromJson(json.decode(str));
@@ -38,8 +40,8 @@ class User {
       };
 }
 
-Future<User> createUser(
-    String name, String email, String password, DateTime createdAt) async {
+void createUser(
+    String name, String email, String password, BuildContext context) async {
   final String apiUrl = "http://imtjk.pythonanywhere.com/register";
 
   final response = await http.post(apiUrl,
@@ -50,11 +52,14 @@ Future<User> createUser(
         "name": name,
         "email": email,
         "password": sha256.convert(utf8.encode(password)).toString(),
-        "created_at": createdAt.toString()
+        "plz": ""
       }));
   var parsedJson = jsonDecode(response.body);
-  if (response.statusCode == 200 || parsedJson['Error'] != null) {
-  } else {
-    return null;
+  if (response.statusCode == 200 && parsedJson['Error'] == null) {
+    //User created succesfully, redirect to login Page
+  } else if (parsedJson['Error'] != null) {
+    //auswerten der Error Message
+    //
+
   }
 }

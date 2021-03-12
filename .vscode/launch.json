@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Flutter: Main",
+            "type": "dart",
+            "request": "launch",
+            "program": "flutter_frontend/lib/main.dart",
+            "console": "debugConsole"
+        },
+        {
             "name": "Python: Aktuelle Datei",
             "type": "python",
             "request": "launch",

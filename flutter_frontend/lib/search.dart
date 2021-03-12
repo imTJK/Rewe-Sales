@@ -43,7 +43,10 @@ class DataSearch extends SearchDelegate<String> {
     return Scaffold(
         backgroundColor: Color.fromRGBO(201, 30, 30, 1),
         body: FutureBuilder(
-          future: fetchProduct({"name": query}, 10, 0),
+          future: fetchProduct(
+              {"name": query, "plz": "28213", "category": "nahrungsmittel"},
+              10,
+              0),
           builder: (context, AsyncSnapshot<List<Product>> snapshot) {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
