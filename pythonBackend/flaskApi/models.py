@@ -11,6 +11,18 @@ class User(db.Model):
     last_login_at = db.Column(db.DateTime) 
     is_admin = db.Column(db.Boolean, default=False)
 
+
+
+    def user_to_json(self):
+        return {
+            "id" : self.id,
+            "name" : self.username,
+            "email" : self.email,
+            "plz" : self.plz,
+            "password_hash" : self.password_hash,
+            "created_at" : self.created_at 
+        }
+
     def __repr__(self):
         return '<User {}>'.format(self.username)
 

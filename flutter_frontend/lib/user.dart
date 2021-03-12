@@ -60,7 +60,24 @@ void createUser(
       }));
   var parsedJson = jsonDecode(response.body);
   if (response.statusCode == 200 && parsedJson['Error'] == null) {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+    AlertDialog(
+        title: Text('AlertDialog Title'),
+        content: SingleChildScrollView(
+          child: ListBody(
+            children: <Widget>[
+              Text('Ihr Account wurde erflogreich erstellt'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Zum Login'),
+            onPressed: () {
+              Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Login()));
+            },
+          )
+        ]);
   } else if (parsedJson['Error'] != null) {
     //auswerten der Error Message
     //
