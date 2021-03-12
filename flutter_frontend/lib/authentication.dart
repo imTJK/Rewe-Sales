@@ -13,17 +13,14 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   User _user;
 
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
+  TextEditingController _nameEmailController = TextEditingController();
   TextEditingController _passwortController = TextEditingController();
 
-  String _nameError;
-  String _emailError;
+  String _nameEmailError;
   String _passwordError;
 
   var _formKey = GlobalKey<FormState>();
   var _formKey2 = GlobalKey<FormState>();
-  var _formKey3 = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -43,12 +40,12 @@ class _LoginState extends State<Login> {
                       child: Form(
                           key: _formKey,
                           child: TextFormField(
-                              controller: _nameController,
+                              controller: _nameEmailController,
                               textInputAction: TextInputAction.next,
                               keyboardType: TextInputType.name,
                               decoration: InputDecoration(
-                                errorText: _nameError,
-                                hintText: "Name",
+                                errorText: _nameEmailError,
+                                hintText: "Name oder E-Mail",
                               )))),
                   width: 300,
                   height: 45,
@@ -57,21 +54,6 @@ class _LoginState extends State<Login> {
                   child: Center(
                       child: Form(
                           key: _formKey2,
-                          child: TextFormField(
-                              controller: _emailController,
-                              textInputAction: TextInputAction.next,
-                              keyboardType: TextInputType.emailAddress,
-                              decoration: InputDecoration(
-                                errorText: _emailError,
-                                hintText: "E-Mail",
-                              )))),
-                  width: 300,
-                  height: 45,
-                  color: Colors.white70),
-              Container(
-                  child: Center(
-                      child: Form(
-                          key: _formKey3,
                           child: TextFormField(
                               controller: _passwortController,
                               obscureText: true,
@@ -90,29 +72,21 @@ class _LoginState extends State<Login> {
                       children: <Widget>[
                     TextButton(
                       onPressed: () async {
-                        final String name = _nameController.text;
-                        final String email = _emailController.text;
+                        final String nameEmail = _nameEmailController.text;
                         final String passwort = _passwortController.text;
 
-                        print("name: " +
-                            _nameController.text +
-                            "\nE-Mail: " +
-                            _emailController.text +
+                        print("name/email: " +
+                            _nameEmailController.text +
                             "\nPasswort: ${sha256.convert(utf8.encode(_passwortController.text)).bytes}");
                         setState(() {
-                          if (_nameController.text.length < 1) {
-                            _nameError = "Geben sie einen Namen ein";
+                          if (_nameEmailController.text.length < 1) {
+                            _nameEmailError = "E-Mail oder Name ist inkorrekt";
                           } else {
-                            _nameError = null;
-                          }
-                          if (_emailController.text.contains("@") != true) {
-                            _emailError = "Geben sie eine Email ein";
-                          } else {
-                            _emailError = null;
+                            _nameEmailError = null;
                           }
                         });
                         if (_passwortController.text.length < 8) {
-                          _passwordError = "Geben sie mindestens 8 Zeichen ein";
+                          _passwordError = "Passwort inkorrekt";
                         } else {
                           _passwordError = null;
                           Navigator.of(context).push(MaterialPageRoute(
