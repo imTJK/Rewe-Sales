@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_frontend/products.dart';
 import 'package:flutter_frontend/user.dart';
-
 import 'homepage.dart';
 
 class Login extends StatefulWidget {
@@ -86,7 +84,14 @@ class _LoginState extends State<Login> {
                         } else {
                           _passwordError = null;
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => HomePage()));
+                              builder: (context) => Homepage(
+                                  //wack
+                                  user: new User(
+                                      name: "tEst",
+                                      email: "teSt",
+                                      passwort: "TesT",
+                                      id: "0",
+                                      createdAt: DateTime.now()))));
                         }
                       },
                       child: Text('Anmelden'),
@@ -231,7 +236,7 @@ class _RegisterState extends State<RegisterPage> {
                     } else {
                       _passwordError2 = null;
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => HomePage()));
+                          MaterialPageRoute(builder: (context) => Homepage()));
                     }
                   },
                   child: Text('Registrieren'),

@@ -97,12 +97,15 @@ void loginUser(String name_email, String password, BuildContext context) async {
       parsedJson = jsonDecode(response.body);
       User user = User.fromJson(parsedJson);
       Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Products(
-                // user: user,
-                )),
-      );
+          context,
+          MaterialPageRoute(
+              builder: (context) => Homepage(
+                  user: new User(
+                      name: "tEst",
+                      email: "teSt",
+                      passwort: "TesT",
+                      id: "0",
+                      createdAt: DateTime.now()))));
     }
   }
 }
