@@ -24,7 +24,7 @@ class Product {
     return Product(
         id: json['id'],
         name: json['name'],
-        price: double.parse(json['price']),
+        price: json['price'],
         category: json['category'],
         onSale: json['on_sale_in'],
         imgSrc: json['img_src']);
@@ -81,7 +81,7 @@ class Products extends StatelessWidget {
           ],
         ),
         body: FutureBuilder(
-          future: fetchProduct({"name": "wurst"}, 25, 0),
+          future: fetchProduct({"name": "wurst", "plz" : "28213", "category" : "nahrungsmittel"}, 25, 0),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
               print(snapshot);
