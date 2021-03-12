@@ -7,6 +7,8 @@ import 'package:flutter_frontend/products.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
+import 'homepage.dart';
+
 User userFromJson(String str) => User.fromJson(json.decode(str));
 
 String userToJson(User data) => json.encode(data.toJson());
