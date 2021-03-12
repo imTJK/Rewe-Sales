@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/products.dart';
-import 'package:flutter_frontend/sign_up.dart';
+import 'package:flutter_frontend/user.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -11,7 +11,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  SignUp _user;
+  User _user;
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
@@ -138,7 +138,7 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterState extends State<RegisterPage> {
-  SignUp _user;
+  User _user;
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
@@ -235,7 +235,7 @@ class _RegisterState extends State<RegisterPage> {
                     final String email = _emailController.text;
                     final String passwort = _passwortController.text;
 
-                    //final SignUp user = await createUser(name, email, passwort, DateTime.now());
+                    //final User user = await createUser(name, email, passwort, DateTime.now());
 
                     //  setState(() {_user = user;});
 

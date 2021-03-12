@@ -38,8 +38,8 @@ def get_sales(page, amount):
     products = Product.query.filter(
         and_(
         Product.name.contains(request.args.get('name')),
-        Product.category == request.args.get('category') if 'category' in request.args else True,
-        Product.on_sale == request.args.get('on_sale') if 'on_sale' in request.args else False
+        Product.category == (request.args.get('category') if 'category' in request.args else ""),
+        Product.on_sale == (request.args.get('on_sale') if 'on_sale' in request.args else False)
         )
     ).all()
 
@@ -53,10 +53,10 @@ def get_sales(page, amount):
                     'price' : products[i].price,
                     'img_src' : products[i].img_src,
                     'category' : products[i].category,
-                    'on_sale_in' : products[i].on_sale_in
+                    'on_sale' : products[i].on_sale
                 })
 
-    return json.dumps(products_dict)
+    return jsonify(products_dict)
 
 
 @app.route('/login', methods=['POST'])
