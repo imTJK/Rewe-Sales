@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/authentication.dart';
+import 'package:flutter_frontend/products.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -97,8 +97,8 @@ void loginUser(String name_email, String password, BuildContext context) async {
       Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => HomePage(
-                  user: user,
+            builder: (context) => Products(
+                // user: user,
                 )),
       );
     }

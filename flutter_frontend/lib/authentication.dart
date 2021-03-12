@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/products.dart';
 import 'package:flutter_frontend/user.dart';
@@ -94,11 +91,6 @@ class _LoginState extends State<Login> {
                         final String email = _emailController.text;
                         final String passwort = _passwortController.text;
 
-                        print("name: " +
-                            _nameController.text +
-                            "\nE-Mail: " +
-                            _emailController.text +
-                            "\nPasswort: ${sha256.convert(utf8.encode(_passwortController.text)).bytes}");
                         setState(() {
                           if (_nameController.text.length < 1) {
                             _nameError = "Geben sie einen Namen ein";
