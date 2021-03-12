@@ -10,9 +10,10 @@ import csv
 import pandas as pd
 import sys
 
+from sqlalchemy import and_
 
 # local imports # 
-sys.path.insert(1, r'D:\Programmieren\AndroidStudio\Projects\Rewe-Sales\pythonBackend')
+sys.path.insert(1, r'D:\Programmieren\Flutter\Rewe-Sales\pythonBackend')
 from flaskApi import app, db
 from flaskApi.models import User, Zipcode, Rewe, Product
 
@@ -63,8 +64,15 @@ class ReweCrawler(object):
 
                                 else:
                                     _product.price = float(div.contents[4].contents[0].text.replace('€', '').replace("'",  '').replace(' ', '').replace(',', '.'))
-                                
-                                db.session.add(_product)
+                                if Product.query.filter(
+                                    and_(
+                                        Product.name == _product.name,
+                                        Product.category == _product.category,
+                                        Product.price == _product.price,
+                                        Product.rewe_plz == _product.rewe_plz
+                                    )
+                                ).first() == None:
+                                    db.session.add(_product)
 
                     if len(search_url.split('?')) > 1:
                         search_url = search_url.replace(str(search_url.split('page=')[1]), str(int(search_url.split('page=')[1]) + 1))
