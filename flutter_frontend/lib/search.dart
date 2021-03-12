@@ -14,20 +14,20 @@ class DropdownMenu extends StatefulWidget {
 
 class _DropdownMenuState extends State<StatefulWidget> {
   Map<String, String> categories = {
-    'Obst und Gemüse' : 'obst-gemuese',
-    'Frische und Kühlung' : 'frishe-kuehlung',
-    'Tiefkühl' : 'tiefkuehl',
-    'Nahrungsmittel' : 'nahrungsmittel',
-    'Süßes und Salziges' : 'suesses-salziges',
-    'Kaffee, Tee und Kakao' : 'kaffee-tee-kakao',
-    'Getränke' : 'getraenke',
-    'Wein, Spirituosen und Tabak' : 'wein-spirituosen-tabak',
-    'Drogerie und Kosmetik' : 'drogerie-kosmetik',
-    'Baby und Kind' : 'baby-kind',
-    'Küche und Haushalt' : 'kuehe-haushalt',
-    'Haus, Freizeit und Mode' : 'haus-freizeit',
-    'Garten und  Outdoor' : 'garten-outdoor',
-    'Tier' : 'tier'
+    'Obst und Gemüse': 'obst-gemuese',
+    'Frische und Kühlung': 'frishe-kuehlung',
+    'Tiefkühl': 'tiefkuehl',
+    'Nahrungsmittel': 'nahrungsmittel',
+    'Süßes und Salziges': 'suesses-salziges',
+    'Kaffee, Tee und Kakao': 'kaffee-tee-kakao',
+    'Getränke': 'getraenke',
+    'Wein, Spirituosen und Tabak': 'wein-spirituosen-tabak',
+    'Drogerie und Kosmetik': 'drogerie-kosmetik',
+    'Baby und Kind': 'baby-kind',
+    'Küche und Haushalt': 'kuehe-haushalt',
+    'Haus, Freizeit und Mode': 'haus-freizeit',
+    'Garten und  Outdoor': 'garten-outdoor',
+    'Tier': 'tier'
   };
   String category = "Nahrungsmittel";
 
@@ -139,11 +139,10 @@ class DataSearch extends SearchDelegate<String> {
     return Scaffold(
         backgroundColor: Color.fromRGBO(201, 30, 30, 1),
         body: FutureBuilder(
-          future: fetchProduct({
-            "name": query,
-            "plz": "28213",
-            "category": categoies  data.category.toLowerCase()
-          }, 10, 0),
+          future: fetchProduct(
+              {"name": query, "plz": "28213", "category": data.category},
+              10,
+              0),
           builder: (context, AsyncSnapshot<List<Product>> snapshot) {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
