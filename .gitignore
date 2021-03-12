@@ -42,7 +42,7 @@ app.*.symbols
 app.*.map.json
 
 # Database related
+D:\Programmieren\Flutter\Rewe-Sales\pythonBackend\flaskApi\reweDB.db
 pythonBackend/flaskApi/reweDB.db
 pythonBackend/flaskApi/reweDB.db-journal
 pythonBackend/migrations
-pythonBackend/flaskApi/reweDB.db
