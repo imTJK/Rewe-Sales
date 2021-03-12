@@ -14,20 +14,20 @@ class DropdownMenu extends StatefulWidget {
 
 class _DropdownMenuState extends State<StatefulWidget> {
   Map<String, String> categories = {
-    'Obst und Gemüse' : ,
-    'Frische und Kühlung',
-    'Tiefkühl',
-    'Nahrungsmittel',
-    'Süßes und Salziges',
-    'Kaffee, Tee und Kakao',
-    'Getränke',
-    'Wein, Spirituosen und Tabak',
-    'Drogerie und Kosmetik',
-    'Baby und Kind',
-    'Küche und Haushalt',
-    'Haus, Freizeit und Mode',
-    'Garten und  Outdoor',
-    'Tier'
+    'Obst und Gemüse' : 'obst-gemuese',
+    'Frische und Kühlung' : 'frishe-kuehlung',
+    'Tiefkühl' : 'tiefkuehl',
+    'Nahrungsmittel' : 'nahrungsmittel',
+    'Süßes und Salziges' : 'suesses-salziges',
+    'Kaffee, Tee und Kakao' : 'kaffee-tee-kakao',
+    'Getränke' : 'getraenke',
+    'Wein, Spirituosen und Tabak' : 'wein-spirituosen-tabak',
+    'Drogerie und Kosmetik' : 'drogerie-kosmetik',
+    'Baby und Kind' : 'baby-kind',
+    'Küche und Haushalt' : 'kuehe-haushalt',
+    'Haus, Freizeit und Mode' : 'haus-freizeit',
+    'Garten und  Outdoor' : 'garten-outdoor',
+    'Tier' : 'tier'
   };
   String category = "Nahrungsmittel";
 
