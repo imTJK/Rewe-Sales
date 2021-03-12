@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_frontend/products.dart';
 import 'package:flutter_frontend/user.dart';
 
+import 'homepage.dart';
+
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
@@ -75,9 +77,6 @@ class _LoginState extends State<Login> {
                         final String nameEmail = _nameEmailController.text;
                         final String passwort = _passwortController.text;
 
-                        print("name/email: " +
-                            _nameEmailController.text +
-                            "\nPasswort: ${sha256.convert(utf8.encode(_passwortController.text)).bytes}");
                         setState(() {
                           if (_nameEmailController.text.length < 1) {
                             _nameEmailError = "E-Mail oder Name ist inkorrekt";
@@ -90,7 +89,7 @@ class _LoginState extends State<Login> {
                         } else {
                           _passwordError = null;
                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Products()));
+                              builder: (context) => HomePage()));
                         }
                       },
                       child: Text('Anmelden'),
@@ -235,7 +234,7 @@ class _RegisterState extends State<RegisterPage> {
                     } else {
                       _passwordError2 = null;
                       Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Products()));
+                          MaterialPageRoute(builder: (context) => HomePage()));
                     }
                   },
                   child: Text('Registrieren'),

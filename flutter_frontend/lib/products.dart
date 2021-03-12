@@ -62,55 +62,7 @@ Future<List<Product>> fetchProduct(
   }
 }
 
-class Products extends StatelessWidget {
-  List<Product> products;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: Color.fromRGBO(201, 30, 30, 90),
-        appBar: AppBar(
-          title: Center(child: Text('Produkte')),
-          backgroundColor: Color.fromRGBO(201, 30, 30, 100),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  showSearch(context: context, delegate: DataSearch());
-                })
-          ],
-        ),
-        body: FutureBuilder(
-          future: fetchProduct({"name": "wurst", "plz" : "28213", "category" : "nahrungsmittel"}, 25, 0),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              print(snapshot);
-              return Center(child: CircularProgressIndicator());
-            } else {
-              return Container(
-                  child: ListView.builder(
-                      itemCount: 30,
-                      itemBuilder: (BuildContext context, int index) {
-                        return new Card(
-                            child: ListTile(
-                             title: Text(snapshot.data[index].name),
-                             leading: Image.network(snapshot.data[index].imgSrc),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProductPage(
-                                        product: snapshot.data[index]),
-                                  ),
-                                );
-                              },
-                        ));
-                      }));
-            }
-          },
-        ));
-  }
-}
 
 class ProductPage extends StatelessWidget {
   final Product product;
