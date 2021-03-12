@@ -87,8 +87,8 @@ class _LoginState extends State<Login> {
                               builder: (context) => Homepage(
                                   //wack
                                   user: new User(
-                                      name: "tEst",
-                                      email: "teSt",
+                                      name: "Juan",
+                                      email: "Juan@test.com",
                                       passwort: "TesT",
                                       id: "0",
                                       createdAt: DateTime.now()))));

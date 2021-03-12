@@ -56,7 +56,7 @@ class Homepage extends StatelessWidget {
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                 )),
-                Text('Konto existiert seit dem ' + user.createdAt.day.toString() + "-" + user.createdAt.month.toString() + "-" + user.createdAt.year.toString(),
+                Text('Konto existiert seit dem ' + user.createdAt,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
