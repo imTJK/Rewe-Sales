@@ -3,7 +3,6 @@ import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/authentication.dart';
-import 'package:flutter_frontend/products.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 
@@ -101,8 +100,8 @@ void loginUser(String name_email, String password, BuildContext context) async {
           MaterialPageRoute(
               builder: (context) => Homepage(
                   user: new User(
-                      name: "tEst",
-                      email: "teSt",
+                      name: "Juan",
+                      email: "Juan@test.com",
                       passwort: "TesT",
                       id: "0",
                       createdAt: DateTime.now()))));
