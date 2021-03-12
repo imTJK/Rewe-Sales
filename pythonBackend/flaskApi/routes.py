@@ -3,13 +3,15 @@ sys.path.append(os.path.dirname(__file__))
 
 import json
 
+from flask import Flask, request, jsonify
+
 from flaskApi import app, db
 from flaskApi.models import User, Rewe, Product
+from werkzeug.security import check_password_hash
 
-from sqlalchemy import and_
-
-from flask import Flask, request, jsonify
+from sqlalchemy import and_, or_
 import sqlite3
+import datetime
 
 ### local functions ###
 
@@ -61,8 +63,37 @@ def get_sales(page, amount):
 
 @app.route('/login', methods=['POST'])
 def login_user():
+    def get_user(name_email):
+        return User.query.filter(
+            or_(
+                User.name == name_email,
+                User.email == name_email,
+            )
+        ).first()
+
     if request.is_json():
-        pass
+        content = request.get_json()
+        if content['login_success'] != None:
+            _user = get_user(content['name_email'])
+            if _user != None:
+                return json.dump({"password_hash" : _user.password_hash})
+            else: return "Invalid Query"
+
+        else:
+            _user = get_user(content['name_email'])
+            _user.last_login_at = datetime.datetime.utcnow()
+            return json.dumps({
+                "id" : _user.id,
+                "name" : _user.name,
+                "email" : _user.email
+            })
+        
+    return "Invalid Query"
+
+
+        
+
+
 
 
 @app.route('/register', methods=['POST'])
@@ -76,8 +107,13 @@ def register_user():
         elif User.query.filter_by(name = content['name']).first() != None:
             return(str(json.dump({"Error" : "This Username is already in use"})))
 
-        
-        return 'JSON posted: {}'.format(str(json.loads(content)))
+        db.session.add(User(
+            name = content['name'],
+            email = content['email'],
+            password_hash = content['passwort'],
+            plz = ""
+        ))
+        db.session.commit()
 
-    return(str(json.loads({"Error" : "No Json posted"})))
+    return(str(json.dumps({"Error" : "No Json posted"})))
     

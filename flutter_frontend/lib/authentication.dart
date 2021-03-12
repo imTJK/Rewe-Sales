@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:crypto/crypto.dart';
+import 'package:dbcrypt/dbcrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/products.dart';
 import 'package:flutter_frontend/user.dart';
@@ -235,15 +235,9 @@ class _RegisterState extends State<RegisterPage> {
                     final String email = _emailController.text;
                     final String passwort = _passwortController.text;
 
-                    //final User user = await createUser(name, email, passwort, DateTime.now());
+                    createUser(name, email, passwort, context);
 
                     //  setState(() {_user = user;});
-
-                    print("name: " +
-                        _nameController.text +
-                        "\nE-Mail: " +
-                        _emailController.text +
-                        "\nPasswort: ${sha256.convert(utf8.encode(_passwortController.text)).bytes}");
                     setState(() {
                       if (_nameController.text.length < 1) {
                         _nameError = "Geben sie einen Namen ein";
