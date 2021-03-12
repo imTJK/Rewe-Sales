@@ -66,14 +66,15 @@ def login_user():
     def get_user(name_email):
         return User.query.filter(
             or_(
-                User.name == name_email,
+                User.username == name_email,
                 User.email == name_email,
             )
         ).first()
 
-    if request.is_json():
+    if request.is_json:
         content = request.get_json()
-        if content['login_success'] != None:
+    
+        if 'login_success' not in None:
             _user = get_user(content['name_email'])
             if _user != None:
                 return jsonify({"password_hash" : _user.password_hash})
@@ -91,22 +92,23 @@ def login_user():
 
 @app.route('/register', methods=['POST'])
 def register_user():
-    if request.is_json():
+    if request.is_json:
         content = request.get_json()
         
         if User.query.filter_by(email = content['email']).first() != None:
-            return(str(json.dump({"Error" : "This Email is already in use"})))
+            return(jsonify({"Error" : "This Email is already in use"}))
 
-        elif User.query.filter_by(name = content['name']).first() != None:
-            return(str(json.dump({"Error" : "This Username is already in use"})))
+        elif User.query.filter_by(username = content['name']).first() != None:
+            return(jsonify({"Error" : "This Username is already in use"}))
 
         db.session.add(User(
-            name = content['name'],
+            username = content['name'],
             email = content['email'],
-            password_hash = content['passwort'],
+            password_hash = content['password'],
             plz = ""
         ))
         db.session.commit()
+        return jsonify({"Error" : None})
 
     return(jsonify({"Error" : "No Json posted"}))
     

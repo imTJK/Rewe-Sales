@@ -16,30 +16,30 @@ class User {
   User({
     this.name,
     this.email,
-    this.passwort,
+    this.password,
     this.id,
     this.createdAt,
   });
 
   String name;
   String email;
-  String passwort;
+  String password;
   String id;
-  DateTime createdAt;
+  String createdAt;
 
   factory User.fromJson(Map<String, dynamic> json) => User(
         name: json["name"],
         email: json["email"],
-        id: json["id"],
-        createdAt: DateTime.parse(json["createdAt"]),
+        id: json["id"].toString(),
+        createdAt: json["created_at"],
       );
 
   Map<String, dynamic> toJson() => {
         "name": name,
         "email": email,
-        "passwort": passwort,
+        "password": password,
         "id": id,
-        "createdAt": createdAt.toIso8601String(),
+        "createdAt": createdAt,
       };
 }
 
@@ -59,24 +59,7 @@ void createUser(
       }));
   var parsedJson = jsonDecode(response.body);
   if (response.statusCode == 200 && parsedJson['Error'] == null) {
-    AlertDialog(
-        title: Text('AlertDialog Title'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text('Ihr Account wurde erflogreich erstellt'),
-            ],
-          ),
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Zum Login'),
-            onPressed: () {
-              Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Login()));
-            },
-          )
-        ]);
+    Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
   } else if (parsedJson['Error'] != null) {
     //auswerten der Error Message
     //
@@ -112,16 +95,8 @@ void loginUser(String name_email, String password, BuildContext context) async {
     if (response.statusCode == 200) {
       parsedJson = jsonDecode(response.body);
       User user = User.fromJson(parsedJson);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => Homepage(
-                  user: new User(
-                      name: "Juan",
-                      email: "Juan@test.com",
-                      passwort: "TesT",
-                      id: "0",
-                      createdAt: DateTime.now()))));
+      Navigator.push(context,
+          MaterialPageRoute(builder: (context) => Homepage(user: user)));
     }
   }
 }

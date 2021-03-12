@@ -11,8 +11,6 @@ class User(db.Model):
     last_login_at = db.Column(db.DateTime) 
     is_admin = db.Column(db.Boolean, default=False)
 
-
-
     def user_to_json(self):
         return {
             "id" : self.id,

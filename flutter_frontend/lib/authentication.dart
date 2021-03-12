@@ -11,7 +11,7 @@ class _LoginState extends State<Login> {
   User _user;
 
   TextEditingController _nameEmailController = TextEditingController();
-  TextEditingController _passwortController = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
 
   String _nameEmailError;
   String _passwordError;
@@ -52,12 +52,12 @@ class _LoginState extends State<Login> {
                       child: Form(
                           key: _formKey2,
                           child: TextFormField(
-                              controller: _passwortController,
+                              controller: _passwordController,
                               obscureText: true,
                               keyboardType: TextInputType.visiblePassword,
                               decoration: InputDecoration(
                                 errorText: _passwordError,
-                                hintText: "Passwort",
+                                hintText: "password",
                               )))),
                   width: 300,
                   height: 45,
@@ -70,7 +70,7 @@ class _LoginState extends State<Login> {
                     TextButton(
                       onPressed: () async {
                         final String nameEmail = _nameEmailController.text;
-                        final String passwort = _passwortController.text;
+                        final String password = _passwordController.text;
 
                         setState(() {
                           if (_nameEmailController.text.length < 1) {
@@ -79,19 +79,11 @@ class _LoginState extends State<Login> {
                             _nameEmailError = null;
                           }
                         });
-                        if (_passwortController.text.length < 8) {
-                          _passwordError = "Passwort inkorrekt";
+                        if (_passwordController.text.length < 8) {
+                          _passwordError = "password inkorrekt";
                         } else {
                           _passwordError = null;
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => Homepage(
-                                  //wack
-                                  user: new User(
-                                      name: "tEst",
-                                      email: "teSt",
-                                      passwort: "TesT",
-                                      id: "0",
-                                      createdAt: DateTime.now()))));
+                          loginUser(nameEmail, password, context);
                         }
                       },
                       child: Text('Anmelden'),
@@ -117,8 +109,8 @@ class _RegisterState extends State<RegisterPage> {
 
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwortController = TextEditingController();
-  TextEditingController _passwortController2 = TextEditingController();
+  TextEditingController _passwordController = TextEditingController();
+  TextEditingController _passwordController2 = TextEditingController();
   void setErrorMessage(TextEditingController _controller) {}
   String _nameError;
   String _emailError;
@@ -178,12 +170,12 @@ class _RegisterState extends State<RegisterPage> {
                       child: Form(
                           key: _formKey3,
                           child: TextFormField(
-                              controller: _passwortController,
+                              controller: _passwordController,
                               obscureText: true,
                               keyboardType: TextInputType.visiblePassword,
                               decoration: InputDecoration(
                                 errorText: _passwordError,
-                                hintText: "Passwort",
+                                hintText: "password",
                               )))),
                   width: 300,
                   height: 45,
@@ -193,12 +185,12 @@ class _RegisterState extends State<RegisterPage> {
                       child: Form(
                           key: _formKey4,
                           child: TextFormField(
-                              controller: _passwortController2,
+                              controller: _passwordController2,
                               obscureText: true,
                               keyboardType: TextInputType.visiblePassword,
                               decoration: InputDecoration(
                                 errorText: _passwordError2,
-                                hintText: "Passwort bestätigen",
+                                hintText: "password bestätigen",
                               )))),
                   width: 300,
                   height: 45,
@@ -208,9 +200,9 @@ class _RegisterState extends State<RegisterPage> {
                   onPressed: () async {
                     final String name = _nameController.text;
                     final String email = _emailController.text;
-                    final String passwort = _passwortController.text;
+                    final String password = _passwordController.text;
 
-                    createUser(name, email, passwort, context);
+                    createUser(name, email, password, context);
 
                     //  setState(() {_user = user;});
                     setState(() {
@@ -225,18 +217,18 @@ class _RegisterState extends State<RegisterPage> {
                         _emailError = null;
                       }
                     });
-                    if (_passwortController.text.length < 8) {
+                    if (_passwordController.text.length < 8) {
                       _passwordError = "Geben sie mindestens 8 Zeichen ein";
                     } else {
                       _passwordError = null;
                     }
-                    if (_passwortController2.text != _passwortController.text) {
+                    if (_passwordController2.text != _passwordController.text) {
                       _passwordError2 =
-                          "Geben sie bitte das gleiche Passwort ein";
+                          "Geben sie bitte das gleiche password ein";
                     } else {
                       _passwordError2 = null;
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => Homepage()));
+                      createUser(_nameController.text, _emailController.text,
+                          _passwordController.text, context);
                     }
                   },
                   child: Text('Registrieren'),
