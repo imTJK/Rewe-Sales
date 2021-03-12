@@ -40,3 +40,9 @@ app.*.symbols
 
 # Obfuscation related
 app.*.map.json
+
+# Database related
+pythonBackend/flaskApi/reweDB.db
+pythonBackend/flaskApi/reweDB.db-journal
+pythonBackend/migrations
+pythonBackend/flaskApi/reweDB.db
