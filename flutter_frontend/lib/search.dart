@@ -41,7 +41,7 @@ class _DropdownMenuState extends State<StatefulWidget> {
       style: const TextStyle(color: Colors.deepPurple),
       underline: Container(
         height: 2,
-        color: Colors.deepPurpleAccent,
+        color: Colors.transparent,
       ),
       onChanged: (String newValue) {
         setState(() {
