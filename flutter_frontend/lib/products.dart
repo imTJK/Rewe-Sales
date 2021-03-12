@@ -89,12 +89,21 @@ class Products extends StatelessWidget {
             } else {
               return Container(
                   child: ListView.builder(
-                      itemCount: 10,
+                      itemCount: 30,
                       itemBuilder: (BuildContext context, int index) {
                         return new Card(
                             child: ListTile(
-                          title: Text(snapshot.data[index].name),
-                          leading: Image.network(snapshot.data[index].imgSrc),
+                             title: Text(snapshot.data[index].name),
+                             leading: Image.network(snapshot.data[index].imgSrc),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductPage(
+                                        product: snapshot.data[index]),
+                                  ),
+                                );
+                              },
                         ));
                       }));
             }
