@@ -76,25 +76,18 @@ def login_user():
         if content['login_success'] != None:
             _user = get_user(content['name_email'])
             if _user != None:
-                return json.dump({"password_hash" : _user.password_hash})
+                return jsonify({"password_hash" : _user.password_hash})
             else: return "Invalid Query"
 
         else:
             _user = get_user(content['name_email'])
             _user.last_login_at = datetime.datetime.utcnow()
-            return json.dumps({
-                "id" : _user.id,
-                "name" : _user.name,
-                "email" : _user.email
-            })
+            return jsonify(_user.user_to_json())
         
     return "Invalid Query"
 
 
         
-
-
-
 
 @app.route('/register', methods=['POST'])
 def register_user():
@@ -115,5 +108,5 @@ def register_user():
         ))
         db.session.commit()
 
-    return(str(json.dumps({"Error" : "No Json posted"})))
+    return(jsonify({"Error" : "No Json posted"}))
     

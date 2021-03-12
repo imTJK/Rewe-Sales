@@ -1,19 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_frontend/products.dart';
 
-class DropdownMenu extends StatefulWidget {
-  final String category;
-  DropdownMenu({this.category});
+class Data {
+  String category = "Nahrungsmittel";
+}
 
+final Data data = new Data();
+
+class DropdownMenu extends StatefulWidget {
   @override
-  _DropdownMenuState createState() => _DropdownMenuState(category: category);
+  _DropdownMenuState createState() => _DropdownMenuState();
 }
 
 class _DropdownMenuState extends State<StatefulWidget> {
-  List<String> categories = ['Nahrungsmittel', 'Kappa', 'Rügenwalder Mühle'];
-  String category;
-
-  _DropdownMenuState({this.category});
+  Map<String, String> categories = {
+    'Obst und Gemüse' : ,
+    'Frische und Kühlung',
+    'Tiefkühl',
+    'Nahrungsmittel',
+    'Süßes und Salziges',
+    'Kaffee, Tee und Kakao',
+    'Getränke',
+    'Wein, Spirituosen und Tabak',
+    'Drogerie und Kosmetik',
+    'Baby und Kind',
+    'Küche und Haushalt',
+    'Haus, Freizeit und Mode',
+    'Garten und  Outdoor',
+    'Tier'
+  };
+  String category = "Nahrungsmittel";
 
   @override
   Widget build(BuildContext context) {
@@ -29,11 +45,11 @@ class _DropdownMenuState extends State<StatefulWidget> {
       ),
       onChanged: (String newValue) {
         setState(() {
-          category = newValue.toLowerCase();
+          category = newValue;
         });
-        showSearch(context: context, delegate: DataSearch(category: category));
+        data.category = categories[category];
       },
-      items: this.categories.map<DropdownMenuItem<String>>((String value) {
+      items: this.categories.keys.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -47,9 +63,6 @@ class DataSearch extends SearchDelegate<String> {
   final List<String> list = List.generate(30, (index) => "Text $index");
   List recentList = [];
   Product selectedResult;
-  String selectedCategory;
-  String category;
-  DataSearch({this.category});
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -59,7 +72,7 @@ class DataSearch extends SearchDelegate<String> {
           onPressed: () {
             query = "";
           }),
-      DropdownMenu(category: category),
+      DropdownMenu(),
     ];
   }
 
@@ -78,8 +91,11 @@ class DataSearch extends SearchDelegate<String> {
     return Scaffold(
         backgroundColor: Color.fromRGBO(201, 30, 30, 1),
         body: FutureBuilder(
-          future: fetchProduct(
-              {"name": query, "plz": "28213", "category": category}, 30, 0),
+          future: fetchProduct({
+            "name": query,
+            "plz": "28213",
+            "category": data.category.toLowerCase()
+          }, 30, 0),
           builder: (context, AsyncSnapshot<List<Product>> snapshot) {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
@@ -123,8 +139,11 @@ class DataSearch extends SearchDelegate<String> {
     return Scaffold(
         backgroundColor: Color.fromRGBO(201, 30, 30, 1),
         body: FutureBuilder(
-          future: fetchProduct(
-              {"name": query, "plz": "28213", "category": category}, 10, 0),
+          future: fetchProduct({
+            "name": query,
+            "plz": "28213",
+            "category": categoies  data.category.toLowerCase()
+          }, 10, 0),
           builder: (context, AsyncSnapshot<List<Product>> snapshot) {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
