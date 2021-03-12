@@ -47,9 +47,9 @@ class _DropdownMenuState extends State<StatefulWidget> {
         setState(() {
           category = newValue;
         });
-        data.category = category;
+        data.category = categories[category];
       },
-      items: this.categories.map<DropdownMenuItem<String>>((String value) {
+      items: this.categories.keys.map<DropdownMenuItem<String>>((String value) {
         return DropdownMenuItem<String>(
           value: value,
           child: Text(value),
@@ -142,7 +142,7 @@ class DataSearch extends SearchDelegate<String> {
           future: fetchProduct({
             "name": query,
             "plz": "28213",
-            "category": data.category.toLowerCase()
+            "category": categoies  data.category.toLowerCase()
           }, 10, 0),
           builder: (context, AsyncSnapshot<List<Product>> snapshot) {
             if (!snapshot.hasData) {
