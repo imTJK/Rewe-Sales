@@ -62,8 +62,6 @@ Future<List<Product>> fetchProduct(
   }
 }
 
-
-
 class ProductPage extends StatelessWidget {
   final Product product;
 
@@ -98,7 +96,7 @@ class ProductPage extends StatelessWidget {
                   child: Image.network(product.imgSrc,
                       width: 300, height: 300, fit: BoxFit.fill))),
           Container(
-              child: Text(product.price.toString() + "Äpfel? Birnen?",
+              child: Text(product.price.toString() + "€",
                   style: TextStyle(fontSize: 25, fontWeight: FontWeight.w900),
                   textAlign: TextAlign.center)),
           product.onSale != null
