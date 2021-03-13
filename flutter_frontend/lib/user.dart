@@ -80,7 +80,7 @@ void loginUser(String name_email, String password, BuildContext context) async {
   Response response =
       await checkUser(jsonEncode(<String, String>{"name_email": name_email}));
 
-  if (response.statusCode == 200) {
+  if (response.statusCode == 200 && response.body != "Invalid Query") {
     var parsedJson = jsonDecode(response.body);
     bool loginSuccess = false;
 

@@ -4,6 +4,15 @@ from flaskApi.models import User, Zipcode, Rewe, Product
 import hashlib
 from werkzeug.security import generate_password_hash, check_password_hash
 from webCrawler.crawler import ReweCrawler
+import json
+
+from flask import Flask, request, jsonify
+
+from werkzeug.security import check_password_hash
+
+from sqlalchemy import and_, or_
+import sqlite3
+import datetime
 
 import csv
 import pandas as pd
@@ -22,7 +31,12 @@ def csv_to_db():
 
 
 if __name__ == "__main__":
-    print(generate_password_hash("Hello"))
-    print(check_password_hash(("pbkdf2:sha256:150000$ISxC3oIG$" + "185f8db32271fe25f561a6fc938b2e264306ec304eda518007d1764826381969"),"Hello" ))
-                            
-                            
+    products = Product.query.filter(
+        and_(
+        Product.name.contains("wurst"),
+        Product.category == ("nahrungsmittel"),
+        Product.on_sale == (False),
+        Product.rewe_plz == 28213
+        )
+    ).all()
+    print(products)

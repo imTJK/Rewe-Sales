@@ -47,9 +47,9 @@ class ReweCrawler(object):
                         break
 
                     for product in page_soup.find_all("div", {"class" : "search-service-productDetailsWrapper"}):
-                        _product = Product(rewe_plz = plz, category = category.replace('c','').replace('/',''))
+                        _product = Product(rewe_plz = plz, category = category.replace('/c/','').replace('/',''))
                         divs = product.findChildren('div')
-                        price, amount, on_sale_in  = "", "", "" 
+                        price, amount = "", ""
 
                         for div in divs:
                             if div.attrs and div.attrs['class'] == ['search-service-productPicture']:
@@ -73,15 +73,16 @@ class ReweCrawler(object):
                                     )
                                 ).first() == None:
                                     db.session.add(_product)
+                                    break
 
                     if len(search_url.split('?')) > 1:
                         search_url = search_url.replace(str(search_url.split('page=')[1]), str(int(search_url.split('page=')[1]) + 1))
                     else:
-                        search_url += '?page=2'        
-        db.session.commit()
+                        search_url += '?page=2'     
+                print("done with category:" + category)   
+            print("done with plz:" + plz)
+            db.session.commit()
         self.scraper.cookies.set('marketsCookie', '')
-
-
 
 
     def crawl_rewes(self, url):  

@@ -8,8 +8,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  User _user;
-
   TextEditingController _nameEmailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
@@ -105,8 +103,6 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterState extends State<RegisterPage> {
-  User _user;
-
   TextEditingController _nameController = TextEditingController();
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
